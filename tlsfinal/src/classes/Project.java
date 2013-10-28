@@ -503,4 +503,8 @@ public class Project {
 	public void setFromTo(Map<String, List<List<String>>> FromTo){
 		this.From_To = FromTo;
 	}
+        public Map<String, List<List<String>>> getFromTo(){
+            return this.From_To;
+        }
 }
+

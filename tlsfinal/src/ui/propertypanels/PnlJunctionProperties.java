@@ -1,5 +1,6 @@
 package ui.propertypanels;
 
+import TrafficLight.JFrameInsert;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -9,6 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import roadnetwork.Junction;
+import roadnetwork.RoadNetworkElement;
 
 public class PnlJunctionProperties extends JPanel {
 
@@ -22,6 +24,7 @@ public class PnlJunctionProperties extends JPanel {
 
 	private JLabel lblTypeValue = null;
 
+        private javax.swing.JButton jButton1;
 	/**
 	 * This is the default constructor
 	 */
@@ -75,11 +78,35 @@ public class PnlJunctionProperties extends JPanel {
 		lblIdTitle = new JLabel();
 		lblIdTitle.setText("ID:");
 		this.setSize(143, 52);
-		this.setLayout(new GridBagLayout());
+                jButton1 = new javax.swing.JButton();
+                jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/icons/addlayer.png"))); 
+                //jButton1.setText(" Configure");
+                jButton1.setMaximumSize(new java.awt.Dimension(30, 30));
+                jButton1.setMinimumSize(new java.awt.Dimension(30, 30));
+                jButton1.setPreferredSize(new java.awt.Dimension(30, 30));
+                jButton1.setHorizontalTextPosition(jButton1.CENTER); 
+                
+		this.add(jButton1);
+                this.setLayout(new GridBagLayout());
 		this.add(lblIdTitle, gridBagConstraints11);
 		this.add(lblIDValue, gridBagConstraints2);
 		this.add(lblTypeTitle, gridBagConstraints21);
 		this.add(lblTypeValue, gridBagConstraints3);
+                
+                
+                
+                
+                jButton1.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    JFrameInsert a =  new TrafficLight.JFrameInsert();
+                  
+                    String JunctionName = lblIDValue.getText();
+                    a.setID(JunctionName);
+                    a.show();
+                }
+        });
+                
+                
 	}
 
 } // @jve:decl-index=0:visual-constraint="10,10"

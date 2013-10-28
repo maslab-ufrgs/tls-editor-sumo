@@ -120,10 +120,10 @@ public class PnlLayers extends JPanel implements TreeSelectionListener, ProjectC
 			// Create the tree nodes
 			DefaultMutableTreeNode root = new DefaultMutableTreeNode("Project");
 			DefaultMutableTreeNode mapNode = new DefaultMutableTreeNode(project.getRoadNetwork());
-			DefaultMutableTreeNode layersNode = new DefaultMutableTreeNode("Traffic Layers");
-
+			//DefaultMutableTreeNode layersNode = new DefaultMutableTreeNode("Traffic Layers");
+                        
 			root.add(mapNode);
-
+                        /*
 			for (TrafficDefinitionLayer layer : project.getTrafficLayers()) {
 				DefaultMutableTreeNode layerNode = new DefaultMutableTreeNode(layer);
 
@@ -131,6 +131,7 @@ public class PnlLayers extends JPanel implements TreeSelectionListener, ProjectC
 			}
 
 			root.add(layersNode);
+                        */
 
 			JTrafficLayerTreeModel dtm = new JTrafficLayerTreeModel(root);
 
@@ -337,7 +338,6 @@ public class PnlLayers extends JPanel implements TreeSelectionListener, ProjectC
 		this.setLayout(new BorderLayout());
 		this.add(getScrlLayerList(), BorderLayout.CENTER);
 		this.add(getTlbLayers(), BorderLayout.SOUTH);
-
 	}
 
 	/**

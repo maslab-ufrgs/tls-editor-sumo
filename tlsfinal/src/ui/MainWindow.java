@@ -199,7 +199,6 @@ public class MainWindow extends JFrame implements CurrentLayerChangedListener, W
 	public MainWindow() {
             
 		super();
-                System.out.println("To aqui");
 		//// Initialize controls
 		initialize();
 
@@ -256,7 +255,6 @@ public class MainWindow extends JFrame implements CurrentLayerChangedListener, W
 			mnuView.setEnabled(false);
 			////mnuTrafficLayer.setEnabled(false);
 			////mnuSimulation.setEnabled(false);
-                        System.out.println("---------------"+mnuSimulation.isVisible());
                         
 			SetToolbarEnabled(false);
 
@@ -264,7 +262,7 @@ public class MainWindow extends JFrame implements CurrentLayerChangedListener, W
 			scrlMapHorizontal.setEnabled(false);
 
 			//// Reset title and selection mode
-			setTitle("SUMO - Traffic Lights Generator");
+			setTitle("SUMO - Traffic Lights");
 
 			btnNewSelection.setSelected(true);
 
@@ -282,14 +280,13 @@ public class MainWindow extends JFrame implements CurrentLayerChangedListener, W
 			////mnuSelect.setEnabled(true);
 			mnuView.setEnabled(true);
 			////mnuSimulation.setEnabled(true);
-                        System.out.println("---------------"+mnuSimulation.isVisible());
 			scrlMapVertical.setEnabled(true);
 			scrlMapHorizontal.setEnabled(true);
 
 			SetToolbarEnabled(true);
 
 			//// Update title
-			setTitle("SUMO Traffic Generator" + " - " + project.getFileName());
+			setTitle("SUMO Traffic " + " - " + project.getFileName());
 
 			//// Set the editing mode to road network and initialize the tool to
 			//// the pan tool
@@ -1200,7 +1197,6 @@ public class MainWindow extends JFrame implements CurrentLayerChangedListener, W
 			mnuMain.add(getMnuView());
 			////mnuMain.add(getMnuTrafficLayer());
 			////mnuMain.add(getMnuSimulation());
-                        System.out.println("---------------"+mnuSimulation.isVisible());
 			mnuMain.add(getMnuHelp());
 		}
 		return mnuMain;
@@ -1480,7 +1476,7 @@ public class MainWindow extends JFrame implements CurrentLayerChangedListener, W
 		setJMenuBar(getMnuMain());
 		setContentPane(getJContentPane());
 
-		setTitle("SUMO Traffic Generator");
+		setTitle("SUMO Traffic Lights");
 
 		pack();
 	}

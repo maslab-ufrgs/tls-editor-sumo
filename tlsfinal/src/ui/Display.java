@@ -1,7 +1,6 @@
 package ui;
 
 import TrafficLight.JFrameInsert;
-import TrafficLight.JFrameUpdate;
 import classes.Layer;
 import classes.Project;
 import classes.ProjectElement;
@@ -37,6 +36,7 @@ import java.awt.geom.GeneralPath;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.geom.RectangularShape;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JComponent;
@@ -47,8 +47,11 @@ import javax.swing.JScrollBar;
 
 import roadnetwork.Edge;
 import roadnetwork.Junction;
+import roadnetwork.Lane;
 import roadnetwork.RoadNetwork;
 import roadnetwork.RoadNetworkElement;
+import shapes.Line2DExt;
+import shapes.Polygon2D;
 import trafficdefinition.Accident;
 import trafficdefinition.AreaFlow;
 import trafficdefinition.Flow;
@@ -335,7 +338,7 @@ public class Display extends JComponent implements CurrentLayerChangedListener, 
 
 	public void mouseClicked(MouseEvent e) {
 		
-                // Transform the point to map coordinates
+        // Transform the point to map coordinates
 		Point2D.Double transformedPoint = TransformPoint(e.getPoint());
 
         if (!projectLoaded) {
@@ -359,6 +362,15 @@ public class Display extends JComponent implements CurrentLayerChangedListener, 
 			Isjuction = false;
 		}
 
+                // 2 clicks
+                 if ( Isjuction && (e.getClickCount() == 2) && (e.getButton() == MouseEvent.BUTTON1)) {  
+                     JFrameInsert a =  new TrafficLight.JFrameInsert();
+                     JunctionName = elementBelowMouseaux_00.getId();
+                     a.setID(JunctionName);
+                     a.show();
+                     
+                 }
+                
 		if (Isjuction && ((e.getButton() == MouseEvent.BUTTON3)) ) {
 		//if( e.getButton() == MouseEvent.BUTTON3){
 				
@@ -372,25 +384,7 @@ public class Display extends JComponent implements CurrentLayerChangedListener, 
                     JMenuItem menuItem1 = new JMenuItem("Insert new Traffic Lights"); 
                     
                                       
-                    popup.add(menuItem1);  
-                    JMenuItem menuItemRefresh = new JMenuItem("Update Traffic Lights");   
-                    popup.add(menuItemRefresh); 
-                   
-                    menuItemRefresh.addActionListener(new ActionListener(){
-   
-                        @Override
-                        public void actionPerformed(ActionEvent ae) {
-                            System.out.println("Remoção selecionada");
-                            JFrameUpdate a =  new TrafficLight.JFrameUpdate();
-                            a.show();
-                            //a.dispose();
-                        }
-                    });
-                   
-                    
-                    JMenuItem menuItem = new JMenuItem("Remove Traffic Lights");   
-                    popup.add(menuItem); 
-                    
+                    popup.add(menuItem1);    
                     menuItem1.addActionListener(new ActionListener(){
    
                         @Override
@@ -403,15 +397,7 @@ public class Display extends JComponent implements CurrentLayerChangedListener, 
                         }
                     });
                     
-                    menuItem.addActionListener(new ActionListener(){
-   
-                        @Override
-                        public void actionPerformed(ActionEvent ae) {
-                            int dialogButton = JOptionPane.YES_NO_OPTION;
-                           JOptionPane.showConfirmDialog (null, "Would you like to remove this traffic light?","Warning",dialogButton);
-                            //a.dispose();
-                        }
-                    });
+                   
                     
                     popup.show(e.getComponent(),e.getX(), e.getY());  
                 }
@@ -420,13 +406,16 @@ public class Display extends JComponent implements CurrentLayerChangedListener, 
 		switch (tool) {
 		// Create school
 		case School:
+                    /*
 			if (e.getButton() == MouseEvent.BUTTON1) {
 				currentTrafficLayer.AddTrafficElement(new School(transformedPoint));
 			}
 
 			repaint();
+                    */
 			break;
 		case Hotspot:
+                    /*
 			// If we are in the middle of creating a new hotspot and the user
 			// right clicks then cancel the creation
 			if ((creatingNewElement) && (e.getButton() == MouseEvent.BUTTON3)) {
@@ -458,9 +447,11 @@ public class Display extends JComponent implements CurrentLayerChangedListener, 
 
 				creatingNewElement = true;
 			}
+                        */
 
 			return;
 		case AreaFlow:
+                        /*
 			// If we are in the middle of creating a new area flow and the user
 			// right clicks then cancel the creation
 			if ((creatingNewElement) && (e.getButton() == MouseEvent.BUTTON3)) {
@@ -502,12 +493,13 @@ public class Display extends JComponent implements CurrentLayerChangedListener, 
 			}
                         
                         
-
+                        */
 			return;
+                        
 		case Flow:
 			// Get the map element below the mouse
 			RoadNetworkElement elementBelowMouse = roadNetwork.PointHitTest(transformedPoint);
-
+                        
 			// If we are in the middle of creating a new flow and the user right
 			// clicks or clicks somewhere that is not an edge cancel the
 			// operation
@@ -548,6 +540,7 @@ public class Display extends JComponent implements CurrentLayerChangedListener, 
 
 			return;
 		case Accident:
+                    /*
 			// Get the map element below the mouse
 			RoadNetworkElement elementBelowMouse2 = roadNetwork.PointHitTest(transformedPoint);
 
@@ -556,7 +549,7 @@ public class Display extends JComponent implements CurrentLayerChangedListener, 
 			}
 
 			repaint();
-
+                        */
 			break;
 		case Select:
 			switch (editingMode) {
@@ -819,6 +812,7 @@ public class Display extends JComponent implements CurrentLayerChangedListener, 
 		// Transform the point to map coordinates
 		Point2D.Double transformedPoint = TransformPoint(e.getPoint());
 
+                System.out.println("transformedPoint "+transformedPoint.x+" "+transformedPoint.y);
 		if (transformedPoint == null) {
 			return;
 		}
@@ -1080,9 +1074,119 @@ public class Display extends JComponent implements CurrentLayerChangedListener, 
 		graphics2D.fill(roadNetwork.getBounds());
 
 		// Draw page border
-		graphics2D.setColor(Color.BLACK);
+		graphics2D.setColor(Color.ORANGE);
 		graphics2D.draw(roadNetwork.getBounds());
 
+                //graphics2D.draw(roadNetwork.getl);
+                //graphics2D.setColor(Color.ORANGE);
+                //graphics2D.draw(roadNetwork.getEdges());
+                
+                // Lists holding the previous and next points for all lanes
+		List<Point2D.Double> previousLanePoints = new ArrayList<Point2D.Double>();
+		List<Point2D.Double> nextLanePoints = new ArrayList<Point2D.Double>();
+                
+                for( Edge edge: roadNetwork.getEdges()){
+                    
+                    System.out.println("---------------- Edge: "+ edge );
+                   
+                    for ( Lane lanes: edge.getLanes()){
+                        System.out.println("Lane: "+ lanes.getId());
+                       int parts = lanes.GetTotalPoints();
+                       for( int i =0; i < lanes.GetTotalPoints()-1; i++){
+                       
+                           // last part
+			if (i == parts - 1) {
+					previousLanePoints.add(lanes.GetPoint(i));
+					nextLanePoints.add(lanes.GetPoint(i - 1));
+			}
+			// all others
+			else {
+					previousLanePoints.add(lanes.GetPoint(i));
+					nextLanePoints.add(lanes.GetPoint(i + 1));
+			}
+                         
+                       }
+                       
+                       System.out.println("Pontos:  "+ previousLanePoints + " "+nextLanePoints);
+                       
+                       // Calculate dividers
+			Point2D.Double lineStart = new Point2D.Double();
+			Point2D.Double lineEnd = new Point2D.Double();
+                        List<Line2DExt> dividers = new ArrayList<Line2DExt>();
+			//We have as many dividers as lanes minus one
+                       
+			for (int dp = 0; dp < parts - 1; dp++) {
+
+				lineStart.x = (previousLanePoints.get(dp).x ) / 2;
+				lineStart.y = (previousLanePoints.get(dp).y ) / 2;
+
+				lineEnd.x = (nextLanePoints.get(dp).x ) / 2;
+				lineEnd.y = (nextLanePoints.get(dp).y ) / 2;
+
+				dividers.add(new Line2DExt(lineStart, lineEnd));
+			}
+
+                        Point2D.Double previousCenter;
+                        Point2D.Double nextCenter;
+
+                        Point2D.Double newLeftPoint;
+                        Point2D.Double newRightPoint;
+			// Find the center of the previous and next points
+			previousCenter = PointsCenter(previousLanePoints);
+			nextCenter = PointsCenter(nextLanePoints);
+
+			// if they are horizontal
+			if (previousCenter.y == nextCenter.y) {
+				newLeftPoint = new Point2D.Double(previousCenter.x, previousCenter.y - 1.6);
+				newRightPoint = new Point2D.Double(previousCenter.x, previousCenter.y + 1.6);
+			}
+			// if they are vertical
+			else if (previousCenter.x == nextCenter.x) {
+				newLeftPoint = new Point2D.Double(previousCenter.x - 1.6, previousCenter.y);
+				newRightPoint = new Point2D.Double(previousCenter.x + 1.6, previousCenter.y);
+			}
+			// if they are diagonal
+			else {
+				// use circles
+				double m = -(nextCenter.x - previousCenter.x) / (nextCenter.y - previousCenter.y);
+
+				newLeftPoint = new Point2D.Double((1.6 / Math.sqrt(m * m + 1)) + previousCenter.x, previousCenter.y + m * 1.6 / Math.sqrt(m * m + 1));
+
+				newRightPoint = new Point2D.Double((-1.6 / Math.sqrt(m * m + 1)) + previousCenter.x, previousCenter.y - m * 1.6 / Math.sqrt(m * m + 1));
+			}
+
+                        // polygon of the edge.
+                        List<Point2D.Double> leftPoints = new ArrayList<Point2D.Double>();
+                        List<Point2D.Double> rightPoints = new ArrayList<Point2D.Double>();
+			leftPoints.add(newLeftPoint);
+			rightPoints.add(newRightPoint);
+                        
+                        double[] f = new double[(1) * 2 * 2];
+                        int v = 0;
+
+                        for (Point2D.Double k : rightPoints) {
+                            f[v++] = k.x;
+                            f[v++] = k.y;
+                        }
+
+                        for (int k = leftPoints.size() - 1; k >= 0; k--) {
+                            f[v++] = leftPoints.get(k).x;
+                            f[v++] = leftPoints.get(k).y;
+                         }
+                        
+                        Polygon2D pol = new Polygon2D.Double(f);
+                        graphics2D.setColor(Color.ORANGE);
+                        graphics2D.draw(pol.getBounds2D());
+                        System.out.println("  "+ pol.getBounds());
+
+                    }
+                    
+                }
+                
+                
+                
+                
+                
 		// Draw the road network
 		roadNetwork.Draw(graphics2D, scale);
 
@@ -1117,6 +1221,20 @@ public class Display extends JComponent implements CurrentLayerChangedListener, 
 			graphics2D.setColor(Color.RED);
 			graphics2D.draw(marquee);
 		}
+	}
+        
+        private Point2D.Double PointsCenter(List<Point2D.Double> points) {
+		Point2D.Double center = new Point2D.Double(0, 0);
+
+		for (Point2D.Double p : points) {
+			center.x += p.x;
+			center.y += p.y;
+		}
+
+		center.x /= points.size();
+		center.y /= points.size();
+
+		return center;
 	}
 
 	/**
@@ -1393,4 +1511,7 @@ public class Display extends JComponent implements CurrentLayerChangedListener, 
 
 		repaint();
 	}
+        public void Iniciar(){
+            
+        }
 }

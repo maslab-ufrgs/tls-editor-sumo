@@ -80,21 +80,31 @@ public class ImportXMLTrafficLight {
                                  
                         
 // #----------------------- GERA A ESTRUTURA SEMAFORICA FROM/TO ----------------------# 
-			System.out.println("Gerando De Para ");
+			
 
 			for( String intLaneJunction : Junctions.keySet()){
 				List<List<String>> values = new ArrayList<List<String>>();
 				for( String idConexao :  Connections.keySet()){
 					 if(Junctions.get(intLaneJunction).contains(idConexao)){
-						 values.add(Connections.get(idConexao));
+                                                ArrayList lista1 = new ArrayList<String>(); 
+                                                lista1.add("Name"); 
+                                                lista1.add("0");
+                                                List<String> auxValues = Connections.get(idConexao);     
+                                                List<String> novaLista = new ArrayList<String>(Connections.get(idConexao));  
+                                                novaLista.addAll(lista1);  
+             
+                                                
+						//values.add(Connections.get(idConexao));
+                                                values.add(novaLista);
+                                                 
 					 }
 				}
 				From_To.put(intLaneJunction, values);	
 			}
 
 			// System.out.println(DePara);
-			System.out.println(From_To);
-			GetXMLDEPARA();
+			
+			//GetXMLDEPARA();
 			// from="1i" to="3o" fromLane="0" toLane="0" via=":0_12_0"
 
 		} catch (IOException io) {
@@ -111,7 +121,7 @@ public class ImportXMLTrafficLight {
 		for( String Junction :From_To.keySet()){
 			XML_FROM_TO = XML_FROM_TO + "\n <TrafficLight id=\""+Junction+"\" FromTo=\"";
 			for(List<String> i : From_To.get(Junction)){ 
-				XML_FROM_TO = XML_FROM_TO + i.get(0)+" "+i.get(1)+" "+i.get(2)+" "+i.get(3);
+				XML_FROM_TO = XML_FROM_TO +" " + i.get(0)+" "+i.get(1)+" "+i.get(2)+" "+i.get(3)+ " "+i.get(4)+ " "+i.get(5) ;
 			}
 			XML_FROM_TO = XML_FROM_TO +"\"/>";
 		}
