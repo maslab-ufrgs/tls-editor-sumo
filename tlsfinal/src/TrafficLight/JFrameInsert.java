@@ -2,7 +2,9 @@ package TrafficLight;
 
 import javax.swing.ImageIcon;
 import javax.swing.JTabbedPane;
+import roadnetwork.Edge;
 import roadnetwork.Junction;
+import ui.Display;
 
 /*
  * To change this template, choose Tools | Templates
@@ -74,7 +76,7 @@ public class JFrameInsert extends javax.swing.JFrame {
         jLabel1.setForeground(java.awt.Color.darkGray);
         jLabel1.setText("Traffic Lights");
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "General Information", 0, 0, null, java.awt.Color.lightGray));
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "General Information", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, null, java.awt.Color.lightGray));
 
         jLabel2.setFont(new java.awt.Font("Ubuntu", 0, 15)); // NOI18N
         jLabel2.setForeground(java.awt.Color.gray);
@@ -126,7 +128,7 @@ public class JFrameInsert extends javax.swing.JFrame {
 
         jSpinner1.getAccessibleContext().setAccessibleName("CycleTime");
 
-        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Phase Setting", 0, 0, null, java.awt.Color.lightGray));
+        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Phase Setting", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, null, java.awt.Color.lightGray));
 
         jLabel4.setFont(new java.awt.Font("Ubuntu", 0, 15)); // NOI18N
         jLabel4.setForeground(java.awt.Color.gray);
@@ -187,11 +189,14 @@ public class JFrameInsert extends javax.swing.JFrame {
                     .addComponent(jSpinner2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel7)
                     .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Phases", 0, 0, null, java.awt.Color.lightGray));
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Phases", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, null, java.awt.Color.lightGray));
+
+        jTabbedPane1.setTabLayoutPolicy(javax.swing.JTabbedPane.SCROLL_TAB_LAYOUT);
+        jTabbedPane1.setTabPlacement(javax.swing.JTabbedPane.LEFT);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -283,12 +288,12 @@ public class JFrameInsert extends javax.swing.JFrame {
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(41, Short.MAX_VALUE))
+                .addContainerGap(44, Short.MAX_VALUE))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addGap(122, 122, 122)
                     .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(318, Short.MAX_VALUE)))
+                    .addContainerGap(322, Short.MAX_VALUE)))
         );
 
         jLabel1.getAccessibleContext().setAccessibleName("legenda_TLS");
