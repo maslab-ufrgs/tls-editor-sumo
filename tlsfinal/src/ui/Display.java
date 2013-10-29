@@ -37,6 +37,7 @@ import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.geom.RectangularShape;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JComponent;
@@ -367,7 +368,29 @@ public class Display extends JComponent implements CurrentLayerChangedListener, 
                      JFrameInsert a =  new TrafficLight.JFrameInsert();
                      JunctionName = elementBelowMouseaux_00.getId();
                      a.setID(JunctionName);
+                     
+                     for( Edge ed :roadNetwork.getEdges()){
+                         System.out.println("Checando: "+ed.getId().toString());
+                         if( ed.getId().toString().equals("2")){
+                             System.out.println(" Achei o edge oO: "+ ed.getId());
+
+                             Lane lane= ed.getLanes().get(0);
+                             ArrayList<Lane> lanes = new ArrayList(Arrays.asList(lane));
+                             System.out.println("Lanes: "+lane);
+                             
+                             Polygon2D.Double teste = getGrahic2d(lanes);
+                             
+                             
+                             
+                             //roadNetwork.Draw(teste,scale);
+                             
+                         }
+                     
+                     }
+
+                     
                      a.show();
+                     
                      
                  }
                 
@@ -1079,113 +1102,7 @@ public class Display extends JComponent implements CurrentLayerChangedListener, 
 
                 //graphics2D.draw(roadNetwork.getl);
                 //graphics2D.setColor(Color.ORANGE);
-                //graphics2D.draw(roadNetwork.getEdges());
-                
-                // Lists holding the previous and next points for all lanes
-		List<Point2D.Double> previousLanePoints = new ArrayList<Point2D.Double>();
-		List<Point2D.Double> nextLanePoints = new ArrayList<Point2D.Double>();
-                
-                for( Edge edge: roadNetwork.getEdges()){
-                    
-                    System.out.println("---------------- Edge: "+ edge );
-                   
-                    for ( Lane lanes: edge.getLanes()){
-                        System.out.println("Lane: "+ lanes.getId());
-                       int parts = lanes.GetTotalPoints();
-                       for( int i =0; i < lanes.GetTotalPoints()-1; i++){
-                       
-                           // last part
-			if (i == parts - 1) {
-					previousLanePoints.add(lanes.GetPoint(i));
-					nextLanePoints.add(lanes.GetPoint(i - 1));
-			}
-			// all others
-			else {
-					previousLanePoints.add(lanes.GetPoint(i));
-					nextLanePoints.add(lanes.GetPoint(i + 1));
-			}
-                         
-                       }
-                       
-                       System.out.println("Pontos:  "+ previousLanePoints + " "+nextLanePoints);
-                       
-                       // Calculate dividers
-			Point2D.Double lineStart = new Point2D.Double();
-			Point2D.Double lineEnd = new Point2D.Double();
-                        List<Line2DExt> dividers = new ArrayList<Line2DExt>();
-			//We have as many dividers as lanes minus one
-                       
-			for (int dp = 0; dp < parts - 1; dp++) {
-
-				lineStart.x = (previousLanePoints.get(dp).x ) / 2;
-				lineStart.y = (previousLanePoints.get(dp).y ) / 2;
-
-				lineEnd.x = (nextLanePoints.get(dp).x ) / 2;
-				lineEnd.y = (nextLanePoints.get(dp).y ) / 2;
-
-				dividers.add(new Line2DExt(lineStart, lineEnd));
-			}
-
-                        Point2D.Double previousCenter;
-                        Point2D.Double nextCenter;
-
-                        Point2D.Double newLeftPoint;
-                        Point2D.Double newRightPoint;
-			// Find the center of the previous and next points
-			previousCenter = PointsCenter(previousLanePoints);
-			nextCenter = PointsCenter(nextLanePoints);
-
-			// if they are horizontal
-			if (previousCenter.y == nextCenter.y) {
-				newLeftPoint = new Point2D.Double(previousCenter.x, previousCenter.y - 1.6);
-				newRightPoint = new Point2D.Double(previousCenter.x, previousCenter.y + 1.6);
-			}
-			// if they are vertical
-			else if (previousCenter.x == nextCenter.x) {
-				newLeftPoint = new Point2D.Double(previousCenter.x - 1.6, previousCenter.y);
-				newRightPoint = new Point2D.Double(previousCenter.x + 1.6, previousCenter.y);
-			}
-			// if they are diagonal
-			else {
-				// use circles
-				double m = -(nextCenter.x - previousCenter.x) / (nextCenter.y - previousCenter.y);
-
-				newLeftPoint = new Point2D.Double((1.6 / Math.sqrt(m * m + 1)) + previousCenter.x, previousCenter.y + m * 1.6 / Math.sqrt(m * m + 1));
-
-				newRightPoint = new Point2D.Double((-1.6 / Math.sqrt(m * m + 1)) + previousCenter.x, previousCenter.y - m * 1.6 / Math.sqrt(m * m + 1));
-			}
-
-                        // polygon of the edge.
-                        List<Point2D.Double> leftPoints = new ArrayList<Point2D.Double>();
-                        List<Point2D.Double> rightPoints = new ArrayList<Point2D.Double>();
-			leftPoints.add(newLeftPoint);
-			rightPoints.add(newRightPoint);
-                        
-                        double[] f = new double[(1) * 2 * 2];
-                        int v = 0;
-
-                        for (Point2D.Double k : rightPoints) {
-                            f[v++] = k.x;
-                            f[v++] = k.y;
-                        }
-
-                        for (int k = leftPoints.size() - 1; k >= 0; k--) {
-                            f[v++] = leftPoints.get(k).x;
-                            f[v++] = leftPoints.get(k).y;
-                         }
-                        
-                        Polygon2D pol = new Polygon2D.Double(f);
-                        graphics2D.setColor(Color.ORANGE);
-                        graphics2D.draw(pol.getBounds2D());
-                        System.out.println("  "+ pol.getBounds());
-
-                    }
-                    
-                }
-                
-                
-                
-                
+                //graphics2D.draw(roadNetwork.getEdges());      
                 
 		// Draw the road network
 		roadNetwork.Draw(graphics2D, scale);
@@ -1513,5 +1430,120 @@ public class Display extends JComponent implements CurrentLayerChangedListener, 
 	}
         public void Iniciar(){
             
+        }
+        
+        public Polygon2D.Double getGrahic2d(List<Lane> lanes ){
+           // Each lane is 3.2 meters wide.A lane is defined by a series of points
+		// that pass through the lane's center. All lanes have the same number
+		// of points. The dividers are calculated as the lines passing between
+		// two consecutive lane points
+                
+		// Calculate the width of half the edge.
+		double halfwidth = 1.6 * 1;
+                List<Line2DExt> dividers = new ArrayList<Line2DExt>();
+		// Get the total points that the edge has
+		int parts = Integer.MAX_VALUE;
+		//TODO what happens if each lane has a different number of parts
+		//int parts = lanes.get(0).GetTotalPoints();
+                Edge ed = new Edge();
+                        
+		for(Lane l: lanes){
+			parts = Math.min(parts, l.GetTotalPoints());
+		}
+		
+		// Lists holding the left and right side points that will define the
+		// polygon of the edge.
+		List<Point2D.Double> leftPoints = new ArrayList<Point2D.Double>();
+		List<Point2D.Double> rightPoints = new ArrayList<Point2D.Double>();
+
+		// Lists holding the previous and next points for all lanes
+		List<Point2D.Double> previousLanePoints = new ArrayList<Point2D.Double>();
+		List<Point2D.Double> nextLanePoints = new ArrayList<Point2D.Double>();
+
+		Point2D.Double previousCenter;
+		Point2D.Double nextCenter;
+
+		Point2D.Double newLeftPoint;
+		Point2D.Double newRightPoint;
+
+		//Loop through the number of points that the edge passes through
+		for (int i = 0; i < parts; i++) {
+			previousLanePoints.clear();
+			nextLanePoints.clear();
+
+			// last part
+			if (i == parts - 1) {
+				for (Lane l : lanes) {
+					previousLanePoints.add(l.GetPoint(i));
+					nextLanePoints.add(l.GetPoint(i - 1));
+				}
+			}
+			// all others
+			else {
+				for (Lane l : lanes) {
+					previousLanePoints.add(l.GetPoint(i));
+					nextLanePoints.add(l.GetPoint(i + 1));
+				}
+			}
+
+			// Calculate dividers
+			Point2D.Double lineStart = new Point2D.Double();
+			Point2D.Double lineEnd = new Point2D.Double();
+
+			//We have as many dividers as lanes minus one
+			for (int dp = 0; dp < lanes.size() - 1; dp++) {
+
+				lineStart.x = (previousLanePoints.get(dp).x + previousLanePoints.get(dp + 1).x) / 2;
+				lineStart.y = (previousLanePoints.get(dp).y + previousLanePoints.get(dp + 1).y) / 2;
+
+				lineEnd.x = (nextLanePoints.get(dp).x + nextLanePoints.get(dp + 1).x) / 2;
+				lineEnd.y = (nextLanePoints.get(dp).y + nextLanePoints.get(dp + 1).y) / 2;
+
+				dividers.add(new Line2DExt(lineStart, lineEnd));
+			}
+
+			// Find the center of the previous and next points
+			previousCenter = PointsCenter(previousLanePoints);
+			nextCenter = PointsCenter(nextLanePoints);
+
+			// if they are horizontal
+			if (previousCenter.y == nextCenter.y) {
+				newLeftPoint = new Point2D.Double(previousCenter.x, previousCenter.y - halfwidth);
+				newRightPoint = new Point2D.Double(previousCenter.x, previousCenter.y + halfwidth);
+			}
+			// if they are vertical
+			else if (previousCenter.x == nextCenter.x) {
+				newLeftPoint = new Point2D.Double(previousCenter.x - halfwidth, previousCenter.y);
+				newRightPoint = new Point2D.Double(previousCenter.x + halfwidth, previousCenter.y);
+			}
+			// if they are diagonal
+			else {
+				// use circles
+				double m = -(nextCenter.x - previousCenter.x) / (nextCenter.y - previousCenter.y);
+
+				newLeftPoint = new Point2D.Double((halfwidth / Math.sqrt(m * m + 1)) + previousCenter.x, previousCenter.y + m * halfwidth / Math.sqrt(m * m + 1));
+
+				newRightPoint = new Point2D.Double((-halfwidth / Math.sqrt(m * m + 1)) + previousCenter.x, previousCenter.y - m * halfwidth / Math.sqrt(m * m + 1));
+			}
+
+			leftPoints.add(newLeftPoint);
+			rightPoints.add(newRightPoint);
+		}
+
+		double[] f = new double[(parts) * 2 * 2];
+		int v = 0;
+
+		for (Point2D.Double k : rightPoints) {
+			f[v++] = k.x;
+			f[v++] = k.y;
+		}
+
+		for (int k = leftPoints.size() - 1; k >= 0; k--) {
+			f[v++] = leftPoints.get(k).x;
+			f[v++] = leftPoints.get(k).y;
+		}
+
+               return new Polygon2D.Double(f);
+		
         }
 }
