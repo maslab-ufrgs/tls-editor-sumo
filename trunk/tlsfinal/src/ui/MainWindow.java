@@ -255,7 +255,7 @@ public class MainWindow extends JFrame implements CurrentLayerChangedListener, W
 			mnuView.setEnabled(false);
 			////mnuTrafficLayer.setEnabled(false);
 			////mnuSimulation.setEnabled(false);
-                        
+
 			SetToolbarEnabled(false);
 
 			scrlMapVertical.setEnabled(false);

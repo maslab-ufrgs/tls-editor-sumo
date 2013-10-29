@@ -367,29 +367,9 @@ public class Display extends JComponent implements CurrentLayerChangedListener, 
                  if ( Isjuction && (e.getClickCount() == 2) && (e.getButton() == MouseEvent.BUTTON1)) {  
                      JFrameInsert a =  new TrafficLight.JFrameInsert();
                      JunctionName = elementBelowMouseaux_00.getId();
-                     a.setID(JunctionName);
+                     a.setID(JunctionName);  
                      
-                     for( Edge ed :roadNetwork.getEdges()){
-                         System.out.println("Checando: "+ed.getId().toString());
-                         if( ed.getId().toString().equals("2")){
-                             System.out.println(" Achei o edge oO: "+ ed.getId());
-
-                             Lane lane= ed.getLanes().get(0);
-                             ArrayList<Lane> lanes = new ArrayList(Arrays.asList(lane));
-                             System.out.println("Lanes: "+lane);
-                             
-                             Polygon2D.Double teste = getGrahic2d(lanes);
-                             
-                             
-                             
-                             //roadNetwork.Draw(teste,scale);
-                             
-                         }
-                     
-                     }
-
-                     
-                     a.show();
+                    a.show();
                      
                      
                  }
@@ -1099,7 +1079,7 @@ public class Display extends JComponent implements CurrentLayerChangedListener, 
 		// Draw page border
 		graphics2D.setColor(Color.ORANGE);
 		graphics2D.draw(roadNetwork.getBounds());
-
+                
                 //graphics2D.draw(roadNetwork.getl);
                 //graphics2D.setColor(Color.ORANGE);
                 //graphics2D.draw(roadNetwork.getEdges());      
@@ -1138,6 +1118,26 @@ public class Display extends JComponent implements CurrentLayerChangedListener, 
 			graphics2D.setColor(Color.RED);
 			graphics2D.draw(marquee);
 		}
+                
+                for( Edge ed :roadNetwork.getEdges()){
+                         System.out.println("Checando: "+ed.getId().toString());
+                         if( ed.getId().toString().equals("2")){
+                             System.out.println(" Achei o edge oO: "+ ed.getId());
+
+                             Lane lane= ed.getLanes().get(0);
+                             ArrayList<Lane> lanes = new ArrayList(Arrays.asList(lane));
+                             System.out.println("Lanes: "+lane);
+                             
+                             Polygon2D.Double teste = getGrahic2d(lanes);
+                             graphics2D.setTransform(new AffineTransform());
+                             graphics2D.setColor(Color.ORANGE);
+                             graphics2D.draw(teste.getBounds());
+                             //roadNetwork.Draw(graphics2D, scale);
+                             
+                         }
+                     
+                     }
+                
 	}
         
         private Point2D.Double PointsCenter(List<Point2D.Double> points) {
