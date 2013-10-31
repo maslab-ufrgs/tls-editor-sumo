@@ -31,7 +31,7 @@ public class ImportXMLTrafficLight {
 	public Map<String, List<List<String>>> From_To = new HashMap<String, List<List<String>>>();;
 
 	public Map<String, List<String>> GetFromToInformation(String Arquivo) {
-                System.out.println("Abrindo: "+Arquivo );
+                //System.out.println("Abrindo: "+Arquivo );
                         
                 SAXBuilder builder = new SAXBuilder();
 		// File xmlFile = new File("Output/teste.xml");

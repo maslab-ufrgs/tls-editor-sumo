@@ -98,11 +98,14 @@ public class PnlJunctionProperties extends JPanel {
                 
                 jButton1.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    if(JFrameInsert.StatusWindows ==0){
+                         JFrameInsert.StatusWindows =1;
                     JFrameInsert a =  new TrafficLight.JFrameInsert();
                   
                     String JunctionName = lblIDValue.getText();
                     a.setID(JunctionName);
                     a.show();
+                    }
                 }
         });
                 

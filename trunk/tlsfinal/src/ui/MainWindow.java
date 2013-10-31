@@ -697,6 +697,8 @@ public class MainWindow extends JFrame implements CurrentLayerChangedListener, W
 	 * @return  javax.swing.JButton
 	 * @uml.property  name="btnZoom"
 	 */
+        
+        
 	private JToggleButton getBtnZoom() {
 		if (btnZoom == null) {
 			btnZoom = new JToggleButton();
@@ -733,7 +735,7 @@ public class MainWindow extends JFrame implements CurrentLayerChangedListener, W
 	 * @return  ui.Display
 	 * @uml.property  name="mapDisplay"
 	 */
-	private Display getMapDisplay() {
+	public Display getMapDisplay() {
 		if (mapDisplay == null) {
 			mapDisplay = new Display(getScrlMapVertical(), getScrlMapHorizontal());
 		}
