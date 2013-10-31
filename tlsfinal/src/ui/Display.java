@@ -1,10 +1,13 @@
 package ui;
 
 import TrafficLight.JFrameInsert;
+import TrafficLight.JPanelPhases;
 import classes.Layer;
 import classes.Project;
 import classes.ProjectElement;
 import enums.EditingMode;
+import static enums.EditingMode.GenericTraffic;
+import static enums.EditingMode.Map;
 import enums.SelectionType;
 import enums.ToolType;
 import helpers.Broadcaster;
@@ -38,7 +41,9 @@ import java.awt.geom.Point2D;
 import java.awt.geom.RectangularShape;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
@@ -63,111 +68,118 @@ import trafficdefinition.TrafficArea;
 import trafficdefinition.TrafficDefinitionElement;
 import trafficdefinition.TrafficDefinitionLayer;
 
+
 /**
  * @author  PapaleonLe01
  */
-public class Display extends JComponent implements CurrentLayerChangedListener, ProjectChangedListener, MouseListener, MouseMotionListener, MouseWheelListener, AdjustmentListener, KeyListener {
+public  class Display extends JComponent implements CurrentLayerChangedListener, ProjectChangedListener, MouseListener, MouseMotionListener, MouseWheelListener, AdjustmentListener, KeyListener {
 
-	private static final long serialVersionUID = 7162061244639610972L;
+	private   final long serialVersionUID = 7162061244639610972L;
 
-	private JScrollBar scrlVertical = null;
+	private    JScrollBar scrlVertical = null;
 
-	private JScrollBar scrlHorizontal = null;
+	private    JScrollBar scrlHorizontal = null;
+        
+        
 
 	/**
 	 * The currently selected traffic layer
 	 */
-	private TrafficDefinitionLayer currentTrafficLayer;
+	private    TrafficDefinitionLayer currentTrafficLayer;
 
 	/**
 	 * The current project's road network
 	 */
-	private RoadNetwork roadNetwork;
+	public   RoadNetwork roadNetwork;
 
 	/**
 	 * Flag that states whether a project is open
 	 */
-	private boolean projectLoaded = false;
+	private   boolean projectLoaded = false;
 
 	/**
 	 * The horizontal map translation
 	 */
-	private double translateX;
+	private    double translateX;
 
 	/**
 	 * The vertical map translation
 	 */
-	private double translateY;
+	private   double translateY;
 
 	/**
 	 * The minimum and maximum allowe transalation values
 	 */
-	private double mintranslateX;
+	private   double mintranslateX;
 	/**
 	 * The minimum and maximum allowe transalation values
 	 */
-	private double maxtranslateX;
+	private   double maxtranslateX;
 	/**
 	 * The minimum and maximum allowe transalation values
 	 */
-	private double mintranslateY;
+	private   double mintranslateY;
 	/**
 	 * The minimum and maximum allowe transalation values
 	 */
-	private double maxtranslateY;
+	private   double maxtranslateY;
 
 	/**
 	 * Scaling factor (zoom in - out)
 	 */
-	private double scale;
+	public   double scale;
 
-	private Point previousMouseLocation;
+	private   Point previousMouseLocation;
 
-	private boolean areaZoom;
+	private   boolean areaZoom;
 
 	/**
 	 * The current tool
 	 */
-	private ToolType tool = ToolType.None;
+	private   ToolType tool = ToolType.None;
 
 	/**
 	 * The current selection type
 	 */
-	private SelectionType selectionType = SelectionType.New;
+	private   SelectionType selectionType = SelectionType.New;
 
 	/**
 	 * Helper variable to store a new element during its creation process
 	 */
-	private TrafficDefinitionElement newElement;
+	private   TrafficDefinitionElement newElement;
 
 	/**
 	 * Flag to know whether to draw all traffic layers or just the currently
 	 * selected one
 	 */
-	private boolean drawAllTrafficLayers = false;
+	private    boolean drawAllTrafficLayers = false;
 
-	private GeneralPath areaPath;
+	private   GeneralPath areaPath;
 
 	private boolean creatingNewElement = false;
 
-	private Handle currentHandle = null;
+	private   Handle currentHandle = null;
 
-	private Rectangle marquee;
+	private   Rectangle marquee;
 
-	private Point marqueeStart;
+	private   Point marqueeStart;
 
-	private Point marqueeEnd;
+	private   Point marqueeEnd;
 	private boolean Isjuction = false;
-	private String JunctionName =  null;
+	private   String JunctionName =  null;
 	/**
 	 * The transformation used while drawing the map and traffic layers
 	 */
-	private AffineTransform tx = new AffineTransform();
+	private   AffineTransform tx = new AffineTransform();
 
-	private EditingMode editingMode;
+	private   EditingMode editingMode;
 	 
 
-	private boolean manipulatingHandle = false;
+	private   boolean manipulatingHandle = false;
+        
+        public   Graphics2D graphics2D;
+        public   Map<String,String> mapEdgesLanes = new HashMap<String,String>();
+        private   List<Polygon2D.Double> auxPoly = new ArrayList<Polygon2D.Double>();
 
 	/**
 	 * Default constructor.
@@ -216,7 +228,6 @@ public class Display extends JComponent implements CurrentLayerChangedListener, 
 			translateY = Math.max(maxtranslateY, mintranslateY) - e.getValue() + Math.min(maxtranslateY, mintranslateY);
 			repaint();
 		}
-
 	}
 
 	/**
@@ -338,6 +349,8 @@ public class Display extends JComponent implements CurrentLayerChangedListener, 
         
 
 	public void mouseClicked(MouseEvent e) {
+            
+        
 		
         // Transform the point to map coordinates
 		Point2D.Double transformedPoint = TransformPoint(e.getPoint());
@@ -345,6 +358,12 @@ public class Display extends JComponent implements CurrentLayerChangedListener, 
         if (!projectLoaded) {
 			return;
 		}
+        
+        //if(JPanelPhases.repaint ==1){
+   
+	//	repaint();
+
+        //        }
 
 		
 		if (transformedPoint == null) {
@@ -365,11 +384,14 @@ public class Display extends JComponent implements CurrentLayerChangedListener, 
 
                 // 2 clicks
                  if ( Isjuction && (e.getClickCount() == 2) && (e.getButton() == MouseEvent.BUTTON1)) {  
+                     if(JFrameInsert.StatusWindows ==0){
+                         JFrameInsert.StatusWindows =1;
                      JFrameInsert a =  new TrafficLight.JFrameInsert();
+                     
                      JunctionName = elementBelowMouseaux_00.getId();
                      a.setID(JunctionName);  
-                     
-                    a.show();
+                        a.show();
+                     }
                      
                      
                  }
@@ -389,14 +411,16 @@ public class Display extends JComponent implements CurrentLayerChangedListener, 
                                       
                     popup.add(menuItem1);    
                     menuItem1.addActionListener(new ActionListener(){
-   
+                    
                         @Override
                         public void actionPerformed(ActionEvent ae) {
-                        	
+                       if(JFrameInsert.StatusWindows ==0){
+                           JFrameInsert.StatusWindows =1;
                             JFrameInsert a =  new TrafficLight.JFrameInsert();
                             a.setID(JunctionName);
                             a.show();
                             //a.dispose();
+                        }
                         }
                     });
                     
@@ -589,12 +613,12 @@ public class Display extends JComponent implements CurrentLayerChangedListener, 
 				if ((getWidth() > roadNetwork.getBounds().width * scale) && (getHeight() > roadNetwork.getBounds().height * scale)) {
 					return;
 				} else {
-					scale -= 0.5;
+					scale -= 1.5;
 				}
 			}
 			// Zoom in
 			else {
-				scale += 0.5;
+				scale += 1.5;
 			}
 
 			// Move the previous center of the map to the center of the display
@@ -612,6 +636,7 @@ public class Display extends JComponent implements CurrentLayerChangedListener, 
 		if (!projectLoaded) {
 			return;
 		}
+               
 
 		// Transform from device coordinates to map coordinates
 		Point2D.Double transformedPoint = TransformPoint(e.getPoint());
@@ -870,7 +895,7 @@ public class Display extends JComponent implements CurrentLayerChangedListener, 
 			areaPath.moveTo((float) transformedPoint.x, (float) transformedPoint.y);
 
 			break;
-		}
+		}           
 	}
 
 	public void mouseReleased(MouseEvent e) {
@@ -1036,9 +1061,8 @@ public class Display extends JComponent implements CurrentLayerChangedListener, 
 	 * Responsible for the drawing of the component. Draws the map and traffic
 	 * layers.
 	 */
-	@Override
 	public void paintComponent(Graphics g) {
-		Graphics2D graphics2D = (Graphics2D) g;
+		graphics2D = (Graphics2D) g;
 
 		// Get the clip bounds
 		Rectangle clip = graphics2D.getClipBounds();
@@ -1117,30 +1141,52 @@ public class Display extends JComponent implements CurrentLayerChangedListener, 
 			graphics2D.setTransform(new AffineTransform());
 			graphics2D.setColor(Color.RED);
 			graphics2D.draw(marquee);
-		}
-                
-                for( Edge ed :roadNetwork.getEdges()){
-                         System.out.println("Checando: "+ed.getId().toString());
-                         if( ed.getId().toString().equals("2")){
-                             System.out.println(" Achei o edge oO: "+ ed.getId());
+		}    
 
-                             Lane lane= ed.getLanes().get(0);
-                             ArrayList<Lane> lanes = new ArrayList(Arrays.asList(lane));
-                             System.out.println("Lanes: "+lane);
-                             
-                             Polygon2D.Double teste = getGrahic2d(lanes);
-                             graphics2D.setTransform(new AffineTransform());
-                             graphics2D.setColor(Color.ORANGE);
-                             graphics2D.draw(teste.getBounds());
-                             //roadNetwork.Draw(graphics2D, scale);
-                             
-                         }
-                     
-                     }
                 
+                ArrayList<Lane> lanes = new ArrayList<>();
+                
+                
+                for ( int k = 0 ; k< JPanelPhases.mapEdgesLanes2.size() ; k++ ){
+                        for( Edge ed :roadNetwork.getEdges()){
+                         if( ed.getId().toString().equals(JPanelPhases.mapEdgesLanes2.get(k).get(0))){
+                            for(Lane lane : ed.getLanes()){ 
+                                if( lane.getId().toString().equals(JPanelPhases.mapEdgesLanes2.get(k).get(1))){
+                                    if(!lanes.contains(lane)){
+                                        lanes.add(lane);
+                                    } 
+                                }
+                            }
+                         }
+                    }
+                }
+
+                
+                if( lanes != null && lanes.size()>0){
+                    int i = 0, l =0;
+                    for(int j = 0; j< lanes.size(); j++){
+                        Polygon2D.Double teste = getGrahic2d(Arrays.asList(lanes.get(j)));
+                        graphics2D.setColor(getColor(i));
+                        graphics2D.fill(teste);
+                        if( l == 1 ){
+                            i++;
+                            l=0; 
+                        }else{
+                          l++;    
+                        }
+                    }
+                    SelectNone();
+                    repaint();
+                }
+    
 	}
+            
+            /*
+            
+           */
         
-        private Point2D.Double PointsCenter(List<Point2D.Double> points) {
+        
+        public   Point2D.Double PointsCenter(List<Point2D.Double> points) {
 		Point2D.Double center = new Point2D.Double(0, 0);
 
 		for (Point2D.Double p : points) {
@@ -1164,7 +1210,7 @@ public class Display extends JComponent implements CurrentLayerChangedListener, 
 		// If the new project is null it means that the project was closed.
 		if (project == null) {
 			projectLoaded = false;
-
+                       
 			roadNetwork = null;
 			currentTrafficLayer = null;
 
@@ -1432,7 +1478,7 @@ public class Display extends JComponent implements CurrentLayerChangedListener, 
             
         }
         
-        public Polygon2D.Double getGrahic2d(List<Lane> lanes ){
+        public   Polygon2D.Double getGrahic2d(List<Lane> lanes ){
            // Each lane is 3.2 meters wide.A lane is defined by a series of points
 		// that pass through the lane's center. All lanes have the same number
 		// of points. The dividers are calculated as the lines passing between
@@ -1546,4 +1592,45 @@ public class Display extends JComponent implements CurrentLayerChangedListener, 
                return new Polygon2D.Double(f);
 		
         }
+  public static Color getColor(int i){
+      List<Color> cores = new ArrayList<>();
+                    cores.add(new Color(128,0,0));      
+                    cores.add(new Color(220,20,60));    
+                    cores.add(new Color(255,127,80));   
+                    cores.add(new Color(255,140,0));    
+                    cores.add(new Color(218,165,32));   
+                    cores.add(new Color(238,232,170));   
+                    cores.add(new Color(128,128,0));    
+                    cores.add(new Color(173,255,47));   
+                    cores.add(new Color(34,139,34));    
+                    cores.add(new Color(143,188,143));  
+                    cores.add(new Color(60,179,113));   
+                    cores.add(new Color(0,128,128));    
+                    cores.add(new Color(0,206,209));    
+                    cores.add(new Color(127,255,212));  
+                    cores.add(new Color(138,43,226));   
+                    cores.add(new Color(106,90,205));   
+                    cores.add(new Color(186,85,211));   
+                    cores.add(new Color(216,191,216));  
+                    cores.add(new Color(255,182,193));  
+                    cores.add(new Color(245,245,220));  
+                    cores.add(new Color(245,222,179));  
+                    cores.add(new Color(210,180,140));  
+                    cores.add(new Color(255,245,238));  
+                    cores.add(new Color(240,248,255));  
+                    cores.add(new Color(233,150,122)); 
+
+      if ( i >= 25){
+          return new Color(169,169,169);
+      } else{
+        return cores.get(i);  
+      }         
+  }
+        
+        
+   public   void setLane(List<Polygon2D.Double> poly){ 
+       auxPoly = poly;
+   }
+
 }
+

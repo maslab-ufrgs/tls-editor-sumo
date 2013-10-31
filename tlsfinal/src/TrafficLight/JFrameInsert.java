@@ -1,9 +1,12 @@
 package TrafficLight;
 
+import java.awt.Graphics2D;
 import javax.swing.ImageIcon;
 import javax.swing.JTabbedPane;
 import roadnetwork.Edge;
 import roadnetwork.Junction;
+import roadnetwork.RoadNetwork;
+import sun.awt.DisplayChangedListener;
 import ui.Display;
 
 /*
@@ -21,11 +24,9 @@ public class JFrameInsert extends javax.swing.JFrame {
      * Creates new form JFrameInsert
      */
     private String Id_Junction; 
+    public static int StatusWindows = 0;
     public JFrameInsert() {
-        
     initComponents();
-        
-        
     }
     
     public void setID(String id){
@@ -71,12 +72,22 @@ public class JFrameInsert extends javax.swing.JFrame {
         jMenuItem1.setText("jMenuItem1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Configure Traffic Lights");
+        setAlwaysOnTop(true);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+            public void windowClosed(java.awt.event.WindowEvent evt) {
+                formWindowClosed(evt);
+            }
+        });
 
         jLabel1.setFont(new java.awt.Font("Ubuntu", 1, 15)); // NOI18N
         jLabel1.setForeground(java.awt.Color.darkGray);
         jLabel1.setText("Traffic Lights");
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "General Information", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, null, java.awt.Color.lightGray));
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "General Information", 0, 0, null, java.awt.Color.lightGray));
 
         jLabel2.setFont(new java.awt.Font("Ubuntu", 0, 15)); // NOI18N
         jLabel2.setForeground(java.awt.Color.gray);
@@ -128,7 +139,7 @@ public class JFrameInsert extends javax.swing.JFrame {
 
         jSpinner1.getAccessibleContext().setAccessibleName("CycleTime");
 
-        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Phase Setting", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, null, java.awt.Color.lightGray));
+        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Phase Setting", 0, 0, null, java.awt.Color.lightGray));
 
         jLabel4.setFont(new java.awt.Font("Ubuntu", 0, 15)); // NOI18N
         jLabel4.setForeground(java.awt.Color.gray);
@@ -193,10 +204,19 @@ public class JFrameInsert extends javax.swing.JFrame {
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Phases", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, null, java.awt.Color.lightGray));
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Phases", 0, 0, null, java.awt.Color.lightGray));
 
         jTabbedPane1.setTabLayoutPolicy(javax.swing.JTabbedPane.SCROLL_TAB_LAYOUT);
-        jTabbedPane1.setTabPlacement(javax.swing.JTabbedPane.LEFT);
+        jTabbedPane1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTabbedPane1MouseClicked(evt);
+            }
+        });
+        jTabbedPane1.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                jTabbedPane1StateChanged(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -288,7 +308,7 @@ public class JFrameInsert extends javax.swing.JFrame {
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(44, Short.MAX_VALUE))
+                .addContainerGap(41, Short.MAX_VALUE))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addGap(122, 122, 122)
@@ -306,6 +326,7 @@ public class JFrameInsert extends javax.swing.JFrame {
         jButton2.setEnabled(true);
         jButton4.setEnabled(true);
         addTab(jTabbedPane1,jTextField2.getText());
+        
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
@@ -314,22 +335,46 @@ public class JFrameInsert extends javax.swing.JFrame {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
+        dispose();
+        StatusWindows = 0;
+        JPanelPhases.mapEdgesLanes2.clear();
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton4ActionPerformed
 
+    private void jTabbedPane1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jTabbedPane1StateChanged
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTabbedPane1StateChanged
+
+    private void jTabbedPane1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTabbedPane1MouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTabbedPane1MouseClicked
+
+    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_formWindowClosed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        // TODO add your handling code here:
+        dispose();
+        StatusWindows = 0;
+        JPanelPhases.mapEdgesLanes2.clear();
+    }//GEN-LAST:event_formWindowClosing
+
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
+   
+    //public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
-        try {
+       /* try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
@@ -348,14 +393,14 @@ public class JFrameInsert extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
+        /*java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                new JFrameInsert().setVisible(true);
                
             }
             
         });
-    }
+    }*/
     
     public void addTab(JTabbedPane tabs, String title) {
         //JPanelOpcoes option = new JPanelOpcoes();
@@ -390,4 +435,5 @@ public class JFrameInsert extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField4;
     // End of variables declaration//GEN-END:variables
+
 }
