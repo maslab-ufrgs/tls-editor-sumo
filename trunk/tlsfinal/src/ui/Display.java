@@ -166,7 +166,7 @@ public  class Display extends JComponent implements CurrentLayerChangedListener,
 
 	private   Point marqueeEnd;
 	private boolean Isjuction = false;
-	private   String JunctionName =  null;
+	public  static String JunctionName =  null;
 	/**
 	 * The transformation used while drawing the map and traffic layers
 	 */
@@ -390,7 +390,7 @@ public  class Display extends JComponent implements CurrentLayerChangedListener,
                      
                      JunctionName = elementBelowMouseaux_00.getId();
                      a.setID(JunctionName);  
-                        a.show();
+                     a.show();
                      }
                      
                      
@@ -1239,6 +1239,7 @@ public  class Display extends JComponent implements CurrentLayerChangedListener,
 	public void Refresh() {
 		repaint();
 	}
+       
 
 	/**
 	 * Selects all elements on the currently editing map or traffic layer
