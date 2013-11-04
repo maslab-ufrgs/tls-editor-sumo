@@ -1,6 +1,7 @@
 package ui;
 
 import TrafficLight.ImportXMLTrafficLight;
+import TrafficLight.JFrameInsert;
 import helpers.ApplicationSettings;
 import helpers.Broadcaster;
 import interfaces.CurrentLayerChangedListener;
@@ -749,6 +750,7 @@ public class MainWindow extends JFrame implements CurrentLayerChangedListener, W
 	 */
 	private JMenu getMnuFile() {
 		if (mnuFile == null) {
+                    
 			mnuFile = new JMenu();
 			mnuFile.setText("File");
 			mnuFile.add(getMnuitmNew());
@@ -962,7 +964,7 @@ public class MainWindow extends JFrame implements CurrentLayerChangedListener, W
 	private JMenuItem getMnuitmNew() {
 		if (mnuitmNew == null) {
 			mnuitmNew = new JMenuItem();
-			mnuitmNew.setText("New project...");
+			mnuitmNew.setText("New TLS Project");
 			mnuitmNew.setIcon(new ImageIcon(getClass().getResource("/resources/icons/new.png")));
 			mnuitmNew.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -1192,7 +1194,9 @@ public class MainWindow extends JFrame implements CurrentLayerChangedListener, W
 	 * @uml.property  name="mnuMain"
 	 */
 	private JMenuBar getMnuMain() {
+            
 		if (mnuMain == null) {
+                    
 			mnuMain = new JMenuBar();
 			mnuMain.add(getMnuFile());
 			////mnuMain.add(getMnuSelect());
@@ -1200,6 +1204,7 @@ public class MainWindow extends JFrame implements CurrentLayerChangedListener, W
 			////mnuMain.add(getMnuTrafficLayer());
 			////mnuMain.add(getMnuSimulation());
 			mnuMain.add(getMnuHelp());
+                 
 		}
 		return mnuMain;
 	}

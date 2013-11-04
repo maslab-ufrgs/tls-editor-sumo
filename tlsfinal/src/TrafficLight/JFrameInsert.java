@@ -1,8 +1,25 @@
 package TrafficLight;
 
+import java.awt.Component;
+import java.awt.ComponentOrientation;
 import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import roadnetwork.Edge;
 import roadnetwork.Junction;
 import roadnetwork.RoadNetwork;
@@ -23,17 +40,65 @@ public class JFrameInsert extends javax.swing.JFrame {
     /**
      * Creates new form JFrameInsert
      */
-    private String Id_Junction; 
+    public static String Id_Junction; 
     public static int StatusWindows = 0;
+    public int PhasesCount = 0;
+    private Component JTabbednTop;
     public JFrameInsert() {
-    initComponents();
+        PhasesCount = 0;
+        initComponents();
+        
     }
+    
+    
+    
+    private static int currentIndex = -1;
+    private static int previousIndex = -1;
     
     public void setID(String id){
     	Id_Junction = id;
         jTextField3.setText(id);
         jTextField3.setHorizontalAlignment(jTextField3.CENTER);
         jTextField3.setEnabled(false);
+        System.out.println("Iniciando Panel");
+        System.out.println("JPanelPHASE: "+JPanelPhases.GeneralInfo );
+        
+        UpdateSaveInfo(id);
+        
+        
+    }
+    
+    public void UpdateSaveInfo(String id){
+        // Reload JPanelPhases.GeneralInfo
+        if(id != null && JPanelPhases.GeneralInfo.containsKey(id)){
+            List<String> aux = JPanelPhases.GeneralInfo.get(id);
+            System.out.println("Aux:"+aux);
+            jTextField1.setText(aux.get(0));
+            jSpinner1.setValue(Integer.parseInt(aux.get(1)));
+            jSpinner3.setValue(Integer.parseInt(aux.get(2))); 
+        }
+
+        
+        // Reload JPanelPhases.PhaseInfo
+        if(id != null && JPanelPhases.PhaseTabel.containsKey(id)){
+           
+            System.out.println("Tenho : "+JPanelPhases.PhaseTabel.get(id).size());
+            
+            
+        }
+        
+        /*
+        // Reload JPanelPhases.PhaseInfo
+        if(id != null && JPanelPhases.PhaseInfo.containsKey(id)){
+            List<List<String>> Mapaux = JPanelPhases.PhaseInfo.get(Id_Junction);
+            List<String> aux = Mapaux.get(0);
+            if( Mapaux.get(0)!=null){
+            jTextField4.setText(aux.get(1).toString());
+            jSpinner4.setValue(Integer.parseInt(aux.get(2).toString())); 
+            }
+        }
+        */
+        
     }
 
     /**
@@ -48,22 +113,26 @@ public class JFrameInsert extends javax.swing.JFrame {
         jMenuItem1 = new javax.swing.JMenuItem();
         jLabel1 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         jSpinner1 = new javax.swing.JSpinner();
         jLabel5 = new javax.swing.JLabel();
         jTextField3 = new javax.swing.JTextField();
+        jLabel7 = new javax.swing.JLabel();
+        jSpinner3 = new javax.swing.JSpinner();
+        jLabel2 = new javax.swing.JLabel();
+        jTextField1 = new javax.swing.JTextField();
         jPanel3 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         jTextField2 = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
         jSpinner2 = new javax.swing.JSpinner();
-        jLabel7 = new javax.swing.JLabel();
-        jTextField4 = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
+        jSpinner4 = new javax.swing.JSpinner();
+        jLabel9 = new javax.swing.JLabel();
+        jTextField4 = new javax.swing.JTextField();
+        jLabel8 = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
@@ -73,7 +142,6 @@ public class JFrameInsert extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Configure Traffic Lights");
-        setAlwaysOnTop(true);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
@@ -89,11 +157,6 @@ public class JFrameInsert extends javax.swing.JFrame {
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "General Information", 0, 0, null, java.awt.Color.lightGray));
 
-        jLabel2.setFont(new java.awt.Font("Ubuntu", 0, 15)); // NOI18N
-        jLabel2.setForeground(java.awt.Color.gray);
-        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel2.setText("ID:");
-
         jLabel3.setFont(new java.awt.Font("Ubuntu", 0, 15)); // NOI18N
         jLabel3.setForeground(java.awt.Color.gray);
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -106,34 +169,52 @@ public class JFrameInsert extends javax.swing.JFrame {
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel5.setText("Location:");
 
+        jLabel7.setFont(new java.awt.Font("Ubuntu", 0, 15)); // NOI18N
+        jLabel7.setForeground(java.awt.Color.gray);
+        jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel7.setText("Offset:");
+
+        jSpinner3.setModel(new javax.swing.SpinnerNumberModel(Integer.valueOf(0), Integer.valueOf(0), null, Integer.valueOf(1)));
+
+        jLabel2.setFont(new java.awt.Font("Ubuntu", 0, 15)); // NOI18N
+        jLabel2.setForeground(java.awt.Color.gray);
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel2.setText("ID:");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addComponent(jLabel5)
+                .addGap(6, 6, 6)
+                .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel5)
+                .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jLabel7)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSpinner3)
+                .addGap(34, 34, 34))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2)
                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3)
                     .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel7)
+                    .addComponent(jSpinner3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -153,11 +234,6 @@ public class JFrameInsert extends javax.swing.JFrame {
 
         jSpinner2.setModel(new javax.swing.SpinnerNumberModel(Integer.valueOf(0), Integer.valueOf(0), null, Integer.valueOf(1)));
 
-        jLabel7.setFont(new java.awt.Font("Ubuntu", 0, 15)); // NOI18N
-        jLabel7.setForeground(java.awt.Color.gray);
-        jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel7.setText("Start time:");
-
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/icons/addlayer.png"))); // NOI18N
         jButton1.setText("New Phase");
         jButton1.setMaximumSize(new java.awt.Dimension(67, 30));
@@ -173,40 +249,39 @@ public class JFrameInsert extends javax.swing.JFrame {
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
+            .addGroup(jPanel3Layout.createSequentialGroup()
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(39, 39, 39)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel6)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSpinner2, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel7)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField4, javax.swing.GroupLayout.DEFAULT_SIZE, 123, Short.MAX_VALUE))))
+                .addGap(3, 3, 3)
+                .addComponent(jSpinner2, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(33, 33, 33))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(jLabel4)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4)
                     .addComponent(jLabel6)
-                    .addComponent(jSpinner2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel7)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jSpinner2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Phases", 0, 0, null, java.awt.Color.lightGray));
 
         jTabbedPane1.setTabLayoutPolicy(javax.swing.JTabbedPane.SCROLL_TAB_LAYOUT);
+        jTabbedPane1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jTabbedPane1.setDebugGraphicsOptions(javax.swing.DebugGraphics.NONE_OPTION);
+        jTabbedPane1.setName(""); // NOI18N
         jTabbedPane1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jTabbedPane1MouseClicked(evt);
@@ -217,21 +292,58 @@ public class JFrameInsert extends javax.swing.JFrame {
                 jTabbedPane1StateChanged(evt);
             }
         });
+        jTabbedPane1.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseDragged(java.awt.event.MouseEvent evt) {
+                jTabbedPane1MouseDragged(evt);
+            }
+        });
+
+        jSpinner4.setModel(new javax.swing.SpinnerNumberModel(Integer.valueOf(0), Integer.valueOf(0), null, Integer.valueOf(1)));
+        jSpinner4.setEnabled(false);
+
+        jLabel9.setFont(new java.awt.Font("Ubuntu", 0, 15)); // NOI18N
+        jLabel9.setForeground(java.awt.Color.gray);
+        jLabel9.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel9.setText("Split:");
+
+        jTextField4.setEnabled(false);
+
+        jLabel8.setFont(new java.awt.Font("Ubuntu", 0, 15)); // NOI18N
+        jLabel8.setForeground(java.awt.Color.gray);
+        jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel8.setText("Name:");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jTabbedPane1)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel8)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel9)
+                .addGap(3, 3, 3)
+                .addComponent(jSpinner4, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(147, 147, 147))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 206, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 251, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel8)
+                    .addComponent(jLabel9)
+                    .addComponent(jSpinner4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
 
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/icons/save.png"))); // NOI18N
         jButton2.setText(" Save");
-        jButton2.setEnabled(false);
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
@@ -259,14 +371,14 @@ public class JFrameInsert extends javax.swing.JFrame {
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                .addGap(101, 101, 101)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGap(176, 176, 176)
                 .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
-                .addGap(28, 28, 28)
+                .addGap(18, 18, 18)
                 .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(27, 27, 27)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(140, 140, 140))
+                .addGap(90, 90, 90))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -281,21 +393,15 @@ public class JFrameInsert extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(0, 2, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap()
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 4, Short.MAX_VALUE)))
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -303,17 +409,14 @@ public class JFrameInsert extends javax.swing.JFrame {
                 .addGap(6, 6, 6)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(139, 139, 139)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(41, Short.MAX_VALUE))
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(122, 122, 122)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(322, Short.MAX_VALUE)))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
 
         jLabel1.getAccessibleContext().setAccessibleName("legenda_TLS");
@@ -322,15 +425,46 @@ public class JFrameInsert extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+
         // TODO add your handling code here:
         jButton2.setEnabled(true);
         jButton4.setEnabled(true);
         addTab(jTabbedPane1,jTextField2.getText());
+        PhasesCount = PhasesCount + 1;
+        jTextField4.setEnabled(true);
+        jSpinner4.setEnabled(true);
         
+        // Update JPanelPhases.PhaseInfo
+        String Aux = ""+ PhasesCount; 
+        List<List<String>> MAPaux =  new ArrayList<List<String>>();
+        if(JPanelPhases.PhaseInfo.get(Id_Junction)!= null){
+            MAPaux= JPanelPhases.PhaseInfo.get(Id_Junction);
+            MAPaux.add(Arrays.asList(Aux,jTextField2.getText(),jSpinner2.getValue().toString()));
+            JPanelPhases.PhaseInfo.put(Id_Junction.toString(),MAPaux);
+            //MAPaux.clear();
+        }else{
+            
+            MAPaux.add(Arrays.asList(Aux,jTextField2.getText(),jSpinner2.getValue().toString()));
+            JPanelPhases.PhaseInfo.put(Id_Junction.toString(),MAPaux);
+            //MAPaux.clear();   
+        }
+        
+        jTextField2.setText("");
+        jSpinner2.setValue(0);
+        
+        //public static Map<String, List<String>> PhaseInfo = new HashMap<String, List<String>>();
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
+    // TODO add your handling code here:
+        
+    // Save Info 
+   
+   JPanelPhases.GeneralInfo.put(Id_Junction.toString(),Arrays.asList(jTextField1.getText(),jSpinner1.getValue().toString(),jSpinner3.getValue().toString()));
+
+ 
+   
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
@@ -345,16 +479,91 @@ public class JFrameInsert extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jTabbedPane1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jTabbedPane1StateChanged
-        // TODO add your handling code here:
+        //int indexL = getindextab();
+        //System.out.println("Inice: "+indexL);
+        
+        
     }//GEN-LAST:event_jTabbedPane1StateChanged
 
     private void jTabbedPane1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTabbedPane1MouseClicked
         // TODO add your handling code here:
+        //getindextab();
+        int index = jTabbedPane1.getSelectedIndex()+1;
+        
+        System.out.println("Id:"+index+"\n");        
+        
+        //System.out.println("Tabels:"+JPanelPhases.PhaseTabel.get(Id_Junction).size());
+        /*if(JPanelPhases.PhaseTabel.get(Id_Junction) != null){
+        
+         JTable jtaux = JPanelPhases.PhaseTabel.get(Id_Junction).get(index-1);
+         
+        }*/
+        
+        if(evt.getClickCount() == 1){
+        
+        SetPhaseInfo(index);
+
+            //JTabbednTop = jTabbedPane1.getTabComponentAt(jTabbedPane1.getTabRunCount());
+        
+        }
+        
+        
+        
+        if(evt.getClickCount() == 2){
+        RemoveValuesPhaseInfo(index); 
+        removeTable(index);
+        if(jTabbedPane1.getTabCount() == 1){
+            //jTabbedPane1.remove(jTabbedPane1.getTabRunCount());
+            
+            jTabbedPane1.removeAll();
+            jTabbedPane1.removeAll();
+            jTextField4.setEnabled(false);
+            jSpinner4.setEnabled(false);
+            jButton2.setEnabled(false);
+            jButton4.setEnabled(false);
+            
+        }else{
+        
+        jTabbedPane1.remove(jTabbedPane1.getTabRunCount());
+        }
+       
+        }
+        
+        uptadetitletab();
+ 
     }//GEN-LAST:event_jTabbedPane1MouseClicked
 
+    public void removeTable(int index){
+
+        List<JPanelPhases> MapAux = new ArrayList<JPanelPhases>();
+        if(JPanelPhases.PhaseTabel.get(Id_Junction)!= null){
+            JPanelPhases.PhaseTabel.get(Id_Junction).remove(index);
+        }
+    }
+    
+    public void SetPhaseInfo(int index){
+        
+            if(JPanelPhases.PhaseInfo.containsKey(Id_Junction)){
+                 List<List<String>> Mapaux = JPanelPhases.PhaseInfo.get(Id_Junction);
+                 List<String> aux = Mapaux.get(index-1);
+                 jTextField4.setText(aux.get(1).toString());
+                 jSpinner4.setValue(Integer.parseInt(aux.get(2).toString())); 
+                }
+        
+    }
+    
+    public void RemoveValuesPhaseInfo(int index){
+        if(JPanelPhases.PhaseInfo.containsKey(Id_Junction)){    
+          List<List<String>> Mapaux = JPanelPhases.PhaseInfo.get(Id_Junction);
+          Mapaux.remove(index-1);
+          JPanelPhases.PhaseInfo.put(Id_Junction, Mapaux);
+        }
+        //SetPhaseInfo(jTabbedPane1.getSelectedIndex()+1);
+
+    }
+    
     private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
         // TODO add your handling code here:
-        
     }//GEN-LAST:event_formWindowClosed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
@@ -364,51 +573,49 @@ public class JFrameInsert extends javax.swing.JFrame {
         JPanelPhases.mapEdgesLanes2.clear();
     }//GEN-LAST:event_formWindowClosing
 
-    /**
-     * @param args the command line arguments
-     */
-   
-    //public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-       /* try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(JFrameInsert.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(JFrameInsert.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(JFrameInsert.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(JFrameInsert.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+    private void jTabbedPane1MouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTabbedPane1MouseDragged
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTabbedPane1MouseDragged
+    
+    public void uptadetitletab(){
+        for(int i = 0; i <  jTabbedPane1.getTabCount(); i++){
+            jTabbedPane1.setTitleAt(i, " "+(i+1)+"º Phase");
         }
-        //</editor-fold>
-
-        /* Create and display the form */
-        /*java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-               new JFrameInsert().setVisible(true);
-               
-            }
-            
-        });
-    }*/
+    }    
+    
     
     public void addTab(JTabbedPane tabs, String title) {
         //JPanelOpcoes option = new JPanelOpcoes();
         JPanelPhases newphase = new JPanelPhases(Id_Junction);
         newphase.setEnabled(true);
-        tabs.addTab(title, newphase);
+        
+        //Icon icon = new ImageIcon(("resources/icons/delete.png"));
+        //ImageIcon icon = new ImageIcon(getClass().getResource("/resources/icons/close.png"),"Remove");
+        
+        
+        String auxtitle = ""+(jTabbedPane1.getTabCount()+1)+"º Phase";
+        jTabbedPane1.addTab(auxtitle,null,newphase,"Click twice to delete this tab.("+title+")");
+        
+        List<JTable> MapAux = new ArrayList<JTable>();
+        
+        if(JPanelPhases.PhaseTabel.get(Id_Junction)!= null){
+            
+            MapAux= JPanelPhases.PhaseTabel.get(Id_Junction);
+            
+            MapAux.add(newphase.getJtabble());
+            JPanelPhases.PhaseTabel.put(Id_Junction.toString(), MapAux);
+            //MAPaux.clear();
+        }else{
+            
+            MapAux.add(newphase.getJtabble());
+            JPanelPhases.PhaseTabel.put(Id_Junction.toString(), MapAux);
+            //MAPaux.clear();   
+        }
         
     }
+    
+    
+    
       
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
@@ -422,6 +629,8 @@ public class JFrameInsert extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
@@ -429,6 +638,8 @@ public class JFrameInsert extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JSpinner jSpinner1;
     private javax.swing.JSpinner jSpinner2;
+    private javax.swing.JSpinner jSpinner3;
+    private javax.swing.JSpinner jSpinner4;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
@@ -436,4 +647,26 @@ public class JFrameInsert extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField4;
     // End of variables declaration//GEN-END:variables
 
+    public int getindextab(){
+        
+        int index = jTabbedPane1.getSelectedIndex();
+        
+        if (index != currentIndex)
+        {
+          previousIndex = currentIndex;
+          currentIndex = index;
+          if (previousIndex != -1)
+          {
+            String currTabTitle = jTabbedPane1.getTitleAt(currentIndex);
+            String prevTabTitle = jTabbedPane1.getTitleAt(previousIndex);
+            
+            //String tab = "";
+        
+            //tab = (jTabbedPane1.getTabRunCount()) +"º Phase";
+            //System.out.println("Aba: "+tab+  "  total:"+ jTabbedPane1.getTabCount()+" Estou:"+jTabbedPane1.getTabRunCount()+" ou "+currentIndex);
+            return currentIndex;
+          }
+        }
+        return -1;
+    }
 }

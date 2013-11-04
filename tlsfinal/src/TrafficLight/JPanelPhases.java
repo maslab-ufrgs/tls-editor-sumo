@@ -5,13 +5,16 @@
 package TrafficLight;
 
 import classes.Project;
+import com.sun.rowset.internal.Row;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,8 +22,10 @@ import javax.swing.CellEditor;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableRowSorter;
 import ui.Display;
 
 /**
@@ -33,13 +38,20 @@ public class JPanelPhases extends javax.swing.JPanel {
      * Creates new form JPanelPhases
      */
     private int len;
-    public static  String[] columnNames = {"","From Edge", "To Edge","From Lane","To Lane","Split","Color"};  
+    public static  String[] columnNames = {"","From Edge", "To Edge","From Lane","To Lane","Color"};  
     public static List<List<String>> mapEdgesLanes2 = new ArrayList<List<String>>();
             ///Map<String,String> mapEdgesLanes2 = new HashMap<String,String>();
     public static int repaint = 0;
     public Object[][] data;
     public int datarow=0;
     public int datacol=0;
+    
+    public static Map<String, List<String>> GeneralInfo = new HashMap<String, List<String>>();  
+    public static Map<String, List<List<String>>> PhaseInfo = new HashMap<String, List<List<String>>>();
+    public static Map<String, List<JTable>> PhaseTabel = new HashMap<String, List<JTable>>();
+       
+     //public Map<String, Map <String>> Phasesinf = new HashMap<String, Map <String>>;
+    
     
     
     public void setlen(String Conectionname){
@@ -55,14 +67,14 @@ public class JPanelPhases extends javax.swing.JPanel {
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             data,
             new String [] {
-                "", "From Edge", "To Edge", "From Lane", "To Lane", "Split", "Color"
+                "", "From Edge", "To Edge", "From Lane", "To Lane", "Color"
             }
         ) {
             Class[] types = new Class [] {
                 java.lang.Boolean.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
             };
             boolean[] canEdit = new boolean [] {
-                true, false, false, false, false, true, false
+                true, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -97,7 +109,7 @@ public class JPanelPhases extends javax.swing.JPanel {
                 
                 
                         
-                if(table.getValueAt(row, 0) == true && column == 6 ){
+                if(table.getValueAt(row, 0) == true && column == 5 ){
                     
                     
                     renderer.setBackground(Display.getColor(aux.get(row)));
@@ -117,8 +129,12 @@ public class JPanelPhases extends javax.swing.JPanel {
 
         datarow = jTable1.getRowCount();
         datacol = jTable1.getColumnCount();
-        jTable1.setEnabled(true);
-        jTable1.setVisible(true);
+ 
+        
+         jTable1.setEnabled(true);
+         jTable1.setVisible(true);
+
+        //jTable1.sorterChanged(null);
         
     }
     
@@ -130,6 +146,10 @@ public class JPanelPhases extends javax.swing.JPanel {
         
         
     }
+     
+     public JTable getJtabble(){
+         return jTable1; 
+     }
      
      public Object[][] getdata(){
          return data;
@@ -148,9 +168,7 @@ public class JPanelPhases extends javax.swing.JPanel {
                        (data[j][1].toString().equals(aux.get(i).get(1))) &&  // To Edge
                        (data[j][2].toString().equals(aux.get(i).get(2))) &&  // From Lane
                        (data[j][3].toString().equals(aux.get(i).get(3)))){   // To Lane
-                       
-                        
-                        
+
                     }
                             
                     
@@ -164,10 +182,6 @@ public class JPanelPhases extends javax.swing.JPanel {
          
      }
      
-    public void  get(){
-        
-    } 
-      
     public  Object[][] InsertValues(String Conectionname){
         Object[][] data = new Object[len][7];
         
@@ -185,8 +199,7 @@ public class JPanelPhases extends javax.swing.JPanel {
                    data[i][2] = values.get(1); // To Edge
                    data[i][3] = values.get(2); // From Lane
                    data[i][4] = values.get(3); // To Lane
-                   data[i][5] = values.get(5); // Slice
-                   data[i][6] = "     ";
+                   data[i][5] = "     ";
                    // 4 - reference
                    i++;
                }
@@ -226,14 +239,14 @@ public class JPanelPhases extends javax.swing.JPanel {
 
             },
             new String [] {
-                "", "From Edge", "To Edge", "From Lane", "To Lane", "Split", "Color"
+                "", "From Edge", "To Edge", "From Lane", "To Lane", "Color"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Boolean.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
+                java.lang.Boolean.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
             };
             boolean[] canEdit = new boolean [] {
-                true, false, false, false, false, true, false
+                true, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -324,6 +337,7 @@ public class JPanelPhases extends javax.swing.JPanel {
 
         mapEdgesLanes2.clear();
         
+        jTable1.repaint();
         repaint = 1;
         
         for( int row = 0; row< jTable1.getRowCount(); row++  ){
@@ -345,13 +359,17 @@ public class JPanelPhases extends javax.swing.JPanel {
             }
         } 
         
-        
+     
 
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
+        //PhaseTabel.put(JFrameInsert.Id_Junction, null);
+        //Map<String, JTable> aux = new HashMap<String, JTable>();
+        
+        
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
