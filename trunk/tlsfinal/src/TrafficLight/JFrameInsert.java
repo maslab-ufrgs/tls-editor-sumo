@@ -47,6 +47,9 @@ public class JFrameInsert extends javax.swing.JFrame {
     private Component JTabbednTop;
     public JFrameInsert() {
         PhasesCount = 0;
+        if(JPanelPhases.PhaseInfo.containsKey(Id_Junction)){
+            PhasesCount = JPanelPhases.PhaseInfo.get(Id_Junction).size();
+        }
         initComponents();
         
     }
@@ -63,10 +66,8 @@ public class JFrameInsert extends javax.swing.JFrame {
         jTextField3.setEnabled(false);
         System.out.println("Iniciando Panel");
         System.out.println("JPanelPHASE: "+JPanelPhases.GeneralInfo );
-        
+
         UpdateSaveInfo(id);
-        
-        
     }
     
     public void UpdateSaveInfo(String id){
