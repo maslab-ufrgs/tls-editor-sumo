@@ -1,5 +1,6 @@
 package TrafficLight;
 
+import static TrafficLight.JPanelPhases.PhaseTabel;
 import java.awt.Component;
 import java.awt.ComponentOrientation;
 import java.awt.Graphics2D;
@@ -23,7 +24,7 @@ import javax.swing.SwingConstants;
 import roadnetwork.Edge;
 import roadnetwork.Junction;
 import roadnetwork.RoadNetwork;
-import sun.awt.DisplayChangedListener;
+//import sun.awt.DisplayChangedListener;
 import ui.Display;
 
 /*
@@ -79,25 +80,26 @@ public class JFrameInsert extends javax.swing.JFrame {
         }
 
         
-        // Reload JPanelPhases.PhaseInfo
-        if(id != null && JPanelPhases.PhaseTabel.containsKey(id)){
-           
-            System.out.println("Tenho : "+JPanelPhases.PhaseTabel.get(id).size());
-            
-            
-        }
         
-        /*
-        // Reload JPanelPhases.PhaseInfo
-        if(id != null && JPanelPhases.PhaseInfo.containsKey(id)){
-            List<List<String>> Mapaux = JPanelPhases.PhaseInfo.get(Id_Junction);
-            List<String> aux = Mapaux.get(0);
-            if( Mapaux.get(0)!=null){
-            jTextField4.setText(aux.get(1).toString());
-            jSpinner4.setValue(Integer.parseInt(aux.get(2).toString())); 
-            }
-        }
-        */
+        System.out.println("Carregando Tabelas...");
+
+        if(id != null && JPanelPhases.PhaseInfo.get(id) != null &&JPanelPhases.PhaseInfo.containsKey(id)){
+            System.out.println("Existe Informações:"+JPanelPhases.PhaseInfo.get(id).size()); 
+            
+            
+             int listsize = JPanelPhases.PhaseInfo.get(id).size();             
+             System.out.println("Size: "+ listsize);
+             for(int i=0; i<listsize;i++){
+               String name = JPanelPhases.PhaseInfo.get(id).get(i).get(0); // name
+               addTab(jTabbedPane1,name,i); 
+             }
+             
+             
+             jTextField4.setEnabled(true);
+             jSpinner4.setEnabled(true);
+             jTextField2.setText("");
+             jSpinner2.setValue(0);
+         }
         
     }
 
@@ -429,8 +431,8 @@ public class JFrameInsert extends javax.swing.JFrame {
         // TODO add your handling code here:
         jButton2.setEnabled(true);
         jButton4.setEnabled(true);
-        addTab(jTabbedPane1,jTextField2.getText());
-        PhasesCount = PhasesCount + 1;
+        addTab(jTabbedPane1,jTextField2.getText(),PhasesCount);
+        PhasesCount = PhasesCount ++;
         jTextField4.setEnabled(true);
         jSpinner4.setEnabled(true);
         
@@ -457,7 +459,7 @@ public class JFrameInsert extends javax.swing.JFrame {
 
     
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-    // TODO add your handling code here:
+    // TODO add your handling code here:PhaseTabel
         
     // Save Info 
    
@@ -537,7 +539,7 @@ public class JFrameInsert extends javax.swing.JFrame {
 
         List<JPanelPhases> MapAux = new ArrayList<JPanelPhases>();
         if(JPanelPhases.PhaseTabel.get(Id_Junction)!= null){
-            JPanelPhases.PhaseTabel.get(Id_Junction).remove(index);
+            JPanelPhases.PhaseTabel.get(Id_Junction).remove(index-1);
         }
     }
     
@@ -545,10 +547,14 @@ public class JFrameInsert extends javax.swing.JFrame {
         
             if(JPanelPhases.PhaseInfo.containsKey(Id_Junction)){
                  List<List<String>> Mapaux = JPanelPhases.PhaseInfo.get(Id_Junction);
+                 if(index > 0){
                  List<String> aux = Mapaux.get(index-1);
                  jTextField4.setText(aux.get(1).toString());
                  jSpinner4.setValue(Integer.parseInt(aux.get(2).toString())); 
-                }
+                 }
+            }
+            
+            //UpdateSelect(index, Id_Junction);
         
     }
     
@@ -584,9 +590,10 @@ public class JFrameInsert extends javax.swing.JFrame {
     }    
     
     
-    public void addTab(JTabbedPane tabs, String title) {
+    public void addTab(JTabbedPane tabs, String title, int count) {
         //JPanelOpcoes option = new JPanelOpcoes();
-        JPanelPhases newphase = new JPanelPhases(Id_Junction);
+        JPanelPhases newphase = new JPanelPhases(Id_Junction,count);
+        
         newphase.setEnabled(true);
         
         //Icon icon = new ImageIcon(("resources/icons/delete.png"));
@@ -598,19 +605,39 @@ public class JFrameInsert extends javax.swing.JFrame {
         
         List<JTable> MapAux = new ArrayList<JTable>();
         
+        
         if(JPanelPhases.PhaseTabel.get(Id_Junction)!= null){
-            
-            MapAux= JPanelPhases.PhaseTabel.get(Id_Junction);
-            
-            MapAux.add(newphase.getJtabble());
-            JPanelPhases.PhaseTabel.put(Id_Junction.toString(), MapAux);
+
+        MapAux= JPanelPhases.PhaseTabel.get(Id_Junction);
+        MapAux.add(newphase.getJtabble());
+        JPanelPhases.PhaseTabel.put(Id_Junction.toString(), MapAux);
             //MAPaux.clear();
         }else{
             
-            MapAux.add(newphase.getJtabble());
-            JPanelPhases.PhaseTabel.put(Id_Junction.toString(), MapAux);
+        MapAux.add(newphase.getJtabble());
+        JPanelPhases.PhaseTabel.put(Id_Junction.toString(), MapAux);
             //MAPaux.clear();   
         }
+        
+        if(PhaseTabel.containsKey(Id_Junction)){
+            //System.out.println("Atualizando: "+count);
+            //int fases =PhaseTabel.get(Id_Junction).size();
+            //for(int j =0; j< PhaseTabel.get(Id_Junction).get(count).getRowCount();j++){
+            //    System.out.print(" "+PhaseTabel.get(Id_Junction).get(count).getValueAt(j, 0)) ;
+            //}
+            //System.out.println("");
+            newphase.setJTable(PhaseTabel.get(Id_Junction).get(count));
+            repaint();
+        }
+        
+        
+        /*
+        for(int i =0; i<JPanelPhases.PhaseInfo.size();i++){
+            int value = Integer.parseInt(JPanelPhases.PhaseInfo.get(Id_Junction).get(i).get(0));
+            newphase.UpdateSelect(value, Id_Junction); 
+        }
+        */
+        
         
     }
     

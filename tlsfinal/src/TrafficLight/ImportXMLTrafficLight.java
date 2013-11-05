@@ -92,8 +92,6 @@ public class ImportXMLTrafficLight {
                                                 List<String> auxValues = Connections.get(idConexao);     
                                                 List<String> novaLista = new ArrayList<String>(Connections.get(idConexao));  
                                                 novaLista.addAll(lista1);  
-             
-                                                
 						//values.add(Connections.get(idConexao));
                                                 values.add(novaLista);
                                                  
