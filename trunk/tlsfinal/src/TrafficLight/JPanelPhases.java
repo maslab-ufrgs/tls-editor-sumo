@@ -4,8 +4,8 @@
  */
 package TrafficLight;
 
+import static TrafficLight.JFrameInsert.Id_Junction;
 import classes.Project;
-import com.sun.rowset.internal.Row;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics2D;
@@ -106,8 +106,7 @@ public class JPanelPhases extends javax.swing.JPanel {
                     }
                 }
 
-                
-                
+
                         
                 if(table.getValueAt(row, 0) == true && column == 5 ){
                     
@@ -131,6 +130,7 @@ public class JPanelPhases extends javax.swing.JPanel {
         datacol = jTable1.getColumnCount();
  
         
+        
          jTable1.setEnabled(true);
          jTable1.setVisible(true);
 
@@ -138,76 +138,115 @@ public class JPanelPhases extends javax.swing.JPanel {
         
     }
     
-     public JPanelPhases(String Conectionname) {
+    public void UpdateSelect(int index, String Id_Junction){
+        
+        if(PhaseTabel.containsKey(Id_Junction)){
+                       System.out.println("-----------Phase"+(index)+":");
+                       if(PhaseTabel.get(Id_Junction).get(index)!=null){
+                       for( int i =0;i< PhaseTabel.get(Id_Junction).get(index).getRowCount();i++){
+                           System.out.print(" "+PhaseTabel.get(Id_Junction).get(index).getValueAt(i, 0));
+                           jTable1.setValueAt(PhaseTabel.get(Id_Junction).get(index).getValueAt(i, 0), i, 0);
+                       }
+            }
+        
+        }
+        
+    }
+    
+     public JPanelPhases(String Conectionname, int phasesnumber) {
         setlen(Conectionname);
         initComponents();
-        data = InsertValues(Conectionname);
+        data = InsertValues(Conectionname,phasesnumber);
         updateTable(data);
-        
-        
+
     }
      
      public JTable getJtabble(){
+
          return jTable1; 
      }
+     
+     public void setJTable(JTable tabel){
+         System.out.println("Aquiiii");
+         
+         //jTable1 = tabel;
+         
+         Object[][] numdata= new Object[tabel.getModel().getRowCount()][tabel.getModel().getColumnCount()];;
+         for (int count = 0; count < tabel.getModel().getRowCount(); count++){
+         for (int j = 0;j<tabel.getModel().getColumnCount(); j++ ){
+             jTable1.getModel().setValueAt(tabel.getValueAt(count, j), count, j);
+             numdata[count][j] = tabel.getValueAt(count, j);
+         } 
+         }
+         
+         
+         //numdata;
+ 
+         //updateTable(data);
+         jTable1.repaint();
+         repaint();
+         
+     }
+     
      
      public Object[][] getdata(){
          return data;
      }
+    
      
-     public void UpadteData(List<List<String>> aux , int Op, Object[][] data){
-         
-         Object[][] newdata =new Object[datarow][datacol];
-         //Remove
-         if (Op == 0){
-            for(int i =0; i< aux.size(); i++){
-             
-                for(int j = 0; j< datarow;j++){
-  
-                    if((data[j][0].toString().equals(aux.get(i).get(0))) &&  // From Edge
-                       (data[j][1].toString().equals(aux.get(i).get(1))) &&  // To Edge
-                       (data[j][2].toString().equals(aux.get(i).get(2))) &&  // From Lane
-                       (data[j][3].toString().equals(aux.get(i).get(3)))){   // To Lane
-
-                    }
-                            
-                    
-                }
-                
-                
-            }
-         }
-         
-         
-         
-     }
-     
-    public  Object[][] InsertValues(String Conectionname){
+    public  Object[][] InsertValues(String Conectionname, int PhasesCount){
         Object[][] data = new Object[len][7];
         
         Map<String, List<List<String>>> InformationsNET = Project.getCurrentlyLoadedProject().getFromTo();
-     
+        // Map<String, List<JTable>> PhaseTabel
+        System.out.println("PhasesCount:"+PhasesCount);
+        System.out.println("Conection:"+Conectionname);
+
         for( String keys : InformationsNET.keySet() ){
             
             if(keys.equals(Conectionname)){
                List<List<String>> auxList = InformationsNET.get(keys);
                int i = 0;
                for( List<String>  values : auxList ){
-                  
+
+                   
                    data[i][0] = false; // Visible
                    data[i][1] = values.get(0); // From Edge
                    data[i][2] = values.get(1); // To Edge
                    data[i][3] = values.get(2); // From Lane
                    data[i][4] = values.get(3); // To Lane
                    data[i][5] = "     ";
+    
                    // 4 - reference
                    i++;
+             
                }
               
             }
             
  
         }
+        
+        /*
+        if(PhaseTabel.containsKey(Conectionname)){
+            int fases =PhaseTabel.get(Conectionname).size();
+            System.out.println("Phase:"+fases);
+            
+             for(int j=0;j<fases;j++){
+                       System.out.println("-----------Phase"+(j)+":\n");
+                       if(PhaseTabel.get(Conectionname).get(j)!=null){
+                       if(PhasesCount == j){
+                       for( int i =0;i< PhaseTabel.get(Conectionname).get(j).getRowCount();i++){
+                           data[i][0] = PhaseTabel.get(Conectionname).get(j).getValueAt(i, 0);
+                           System.out.print(" "+PhaseTabel.get(Conectionname).get(j).getValueAt(i, 0));
+                           break;
+                       }
+                       }
+            }
+           }
+           
+        }
+        */
         
         //jTable1.
        return data; 
