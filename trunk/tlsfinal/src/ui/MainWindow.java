@@ -1,5 +1,7 @@
 package ui;
 
+import TrafficLight.ExportNetFile;
+import TrafficLight.ExportXmlTrafficLight;
 import TrafficLight.ImportXMLTrafficLight;
 import TrafficLight.JFrameInsert;
 import helpers.ApplicationSettings;
@@ -193,6 +195,8 @@ public class MainWindow extends JFrame implements CurrentLayerChangedListener, W
 	private JToolBar tlbTools = null;
 
 	private ButtonGroup ToolGroup = new ButtonGroup();
+        
+        public static String filepath = ""; 
 
 	/*//*
 	 * This is the default constructor
@@ -1514,8 +1518,12 @@ public class MainWindow extends JFrame implements CurrentLayerChangedListener, W
                                 
                 ImportXMLTrafficLight trafficlights = new ImportXMLTrafficLight();
                 trafficlights.GetFromToInformation(dlg.getMapFile().getPath());
-				Project newProject = new Project(dlg.getProjectPath(), dlg.getMapFile(), trafficlights.From_To);
-                 
+                filepath = dlg.getMapFile().getPath();
+                
+                
+                
+	        Project newProject = new Project(dlg.getProjectPath(), dlg.getMapFile(), trafficlights.From_To);
+                //project.setpathFileNew(filepath); 
                                
                                 
 				//// Notify any registered listeners that the project has changed
@@ -1563,6 +1571,8 @@ public class MainWindow extends JFrame implements CurrentLayerChangedListener, W
 			//// Open the project
 			Project openedProject = new Project(file.getAbsolutePath());
 			
+                         ExportXmlTrafficLight ateste = new ExportXmlTrafficLight();
+                         ateste.ReadFile();
 		
 			
 			//// Notify any registered listeners that the project has been opened
