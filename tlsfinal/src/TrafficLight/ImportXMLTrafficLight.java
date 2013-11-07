@@ -47,7 +47,8 @@ public class ImportXMLTrafficLight {
 			@SuppressWarnings("rawtypes")
 			List list = rootNode.getChildren("junction");
  
-			
+		
+                        
                         for (int i = 0; i < list.size(); i++) {
 				Element node = (Element) list.get(i);
                               

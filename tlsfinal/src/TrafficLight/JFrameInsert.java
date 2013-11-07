@@ -487,9 +487,13 @@ public class JFrameInsert extends javax.swing.JFrame {
         
     // Save Info 
    JPanelPhases.SavedPhaseInfo = JPanelPhases.PhaseInfo;
+   JPanelPhases.PhaseInfo = JPanelPhases.SavedPhaseInfo;
    JPanelPhases.GeneralInfo.put(Id_Junction.toString(),Arrays.asList(jTextField1.getText(),jSpinner1.getValue().toString(),jSpinner3.getValue().toString()));
-
- 
+   ExportNetFile aux = new ExportNetFile();
+   aux.GenerateTlsXmlFile();
+   StatusWindows = 0;
+   dispose();
+   JPanelPhases.mapEdgesLanes2.clear();
    
     }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -510,6 +514,8 @@ public class JFrameInsert extends javax.swing.JFrame {
         JPanelPhases.PhaseInfo.clear();
         StatusWindows = 0;
         dispose();
+        JPanelPhases.mapEdgesLanes2.clear();
+        
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jTabbedPane1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jTabbedPane1StateChanged

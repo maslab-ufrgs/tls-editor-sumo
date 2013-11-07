@@ -1,6 +1,7 @@
 package classes;
 
 import TrafficLight.ImportXMLTrafficLight;
+import TrafficLight.JPanelPhases;
 import enums.TrafficDefinitionLayerType;
 
 import java.io.*;
@@ -25,6 +26,8 @@ import trafficdefinition.ActivityBasedTrafficDefinitionLayer;
 import trafficdefinition.RandomTrafficDefinitionLayer;
 import trafficdefinition.TrafficDefinitionLayer;
 import trafficdefinition.UserDefinedTrafficDefinitionLayer;
+import ui.MainWindow;
+import static ui.MainWindow.filepath;
 
 /**
  * Class representing a simulation project. The project's most basic elements are a road network and a list of traffic definition layers.
@@ -101,7 +104,12 @@ public class Project {
 	 *             If an error has occured during the project opening process.
 	 */
 	
-	private Map<String, List<List<String>>> From_To = new HashMap<String, List<List<String>>>();; 
+	private Map<String, List<List<String>>> From_To = new HashMap<String, List<List<String>>>();
+        private Map<String, List<String>> GeneralInfo = new HashMap<String, List<String>>();  
+        private Map<String, List<List<String>>> PhaseInfo = new HashMap<String, List<List<String>>>();
+        private Map<String, List<List<String>>> SavedPhaseInfo = new HashMap<String, List<List<String>>>();
+        private String pathFileNew = "";
+    //public static Map<String, List<JTable>> PhaseTabel = new HashMap<String, List<JTable>>();
 	
 	public Project(String projectPath) throws Exception {
 		// Set the project's file name
@@ -130,12 +138,30 @@ public class Project {
 		// Read the vehicle selection for the activity-based layers
 		activityBasedTrafficVehicleSelection = (TypeSelection<VehicleType>) in.readObject();
 
-		setFromTo((Map<String, List<List<String>>>) in.readObject());
+                
+	   setFromTo((Map<String, List<List<String>>>) in.readObject());
+           setpathFileNew((String) in.readObject());
+            /*    
+            try {
+                setGeneralInfo((Map<String, List<String>>) in.readObject());
+            } catch (Exception e) {
+            }
+                try {
+                setPhaseInfo((Map<String, List<List<String>>>) in.readObject());
+            } catch (Exception e) {
+            }
+                try {
+                setSavedPhaseInfo((Map<String, List<List<String>>>) in.readObject());
+            } catch (Exception e) {
+            }
+            * */
+                
+                
 		//From_To =  ;
 		
 		in.close();
 		
-		System.out.println("Abrindo FROM_TO......:"+From_To);
+		//System.out.println("Abrindo FROM_TO......:"+From_To);
 
 		// Set the static currently loaded project variable
 		Project.currentlyLoadedProject = this;
@@ -224,6 +250,11 @@ public class Project {
 		out.writeObject(defaultVehicleType);
 		out.writeObject(activityBasedTrafficVehicleSelection);
 		out.writeObject(From_To2);
+                out.writeObject(MainWindow.filepath);
+               //out.writeObject(JPanelPhases.GeneralInfo);
+               // out.writeObject(JPanelPhases.PhaseInfo);
+               // out.writeObject(JPanelPhases.SavedPhaseInfo);
+                setpathFileNew(MainWindow.filepath);
 		setFromTo(From_To2);
 		out.close();
 	}
@@ -308,6 +339,8 @@ public class Project {
 	public Map<String, List<List<String>>> getFrom_to(){
 		return From_To;
 	}
+        
+        
 
 	/**
 	 * Returns the default vehicle type
@@ -432,9 +465,13 @@ public class Project {
 		out.writeObject(defaultVehicleType);
 		out.writeObject(activityBasedTrafficVehicleSelection);
 		// Alterações aqui
-		System.out.println("Salvando:"+From_To);
+		//System.out.println("Salvando:"+From_To);
 		out.writeObject(From_To);
-
+                out.writeObject(filepath);
+                //
+                //out.writeObject(JPanelPhases.GeneralInfo);
+                //out.writeObject(JPanelPhases.PhaseInfo);
+                //out.writeObject(JPanelPhases.SavedPhaseInfo);
 		out.close();
 	}
 
@@ -506,5 +543,42 @@ public class Project {
         public Map<String, List<List<String>>> getFromTo(){
             return this.From_To;
         }
+        
+        public void setGeneralInfo(Map<String, List<String>> GeneralInfo){
+            this.GeneralInfo = GeneralInfo;
+            JPanelPhases.GeneralInfo = getGeneralInfo();
+            
+        }
+        
+        public void setPhaseInfo(Map<String, List<List<String>>>  PhaseInfo){
+            this.PhaseInfo = PhaseInfo;
+            JPanelPhases.PhaseInfo = getPhaseInfo();
+        }
+        public void setSavedPhaseInfo(Map<String, List<List<String>>> SavedPhaseInfo){
+            this.SavedPhaseInfo = SavedPhaseInfo;
+            JPanelPhases.SavedPhaseInfo = getSavedPhaseInfo();
+            
+        }
+        
+        
+         public Map<String, List<String>> getGeneralInfo(){
+            return GeneralInfo;
+        }
+        
+        public Map<String, List<List<String>>> getPhaseInfo( ){
+            return PhaseInfo;
+        }
+        public Map<String, List<List<String>>> getSavedPhaseInfo( ){
+            return SavedPhaseInfo ;
+        }
+        
+        public String getpathFileNew(){
+            return pathFileNew;
+        }
+        
+        public void setpathFileNew(String pathFileNew){
+            this.pathFileNew = pathFileNew;
+        }
+        
 }
 
