@@ -14,10 +14,8 @@ import ui.MainWindow;
 public class Main2 {
 
     public static void main(String[] args) {
-        ExportXmlTrafficLight ateste = new ExportXmlTrafficLight();
-        ateste.ReadFile();
-        //MainWindow m = new MainWindow();
-        //m.setVisible(true);
+        MainWindow m = new MainWindow();
+        m.setVisible(true);
         
     }
 

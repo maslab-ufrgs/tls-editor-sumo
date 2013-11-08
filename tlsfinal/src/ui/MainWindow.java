@@ -1066,7 +1066,7 @@ public class MainWindow extends JFrame implements CurrentLayerChangedListener, W
 	private JMenuItem getMnuitmExportTDL() {
 		if (mnuitmExportTDL == null) {
 			mnuitmExportTDL = new JMenuItem();
-			mnuitmExportTDL.setText("Export TDL...");
+			mnuitmExportTDL.setText("Export TLS...");
 			mnuitmExportTDL.setIcon(new ImageIcon(getClass().getResource("/resources/icons/clear.png")));
 			mnuitmExportTDL.setEnabled(false);
 			mnuitmExportTDL.addActionListener(new java.awt.event.ActionListener() {
@@ -1628,14 +1628,16 @@ public class MainWindow extends JFrame implements CurrentLayerChangedListener, W
 
 			File file = f.getSelectedFile();
 
-			if(!file.getAbsolutePath().endsWith(".tdl")){
-				file = new File(file.getAbsolutePath()+".tdl");
+			if(!file.getAbsolutePath().endsWith(".net.xml")){
+				file = new File(file.getAbsolutePath()+".net.xml");
 			}
 			
+                        ExportXmlTrafficLight ateste = new ExportXmlTrafficLight();
+                        ateste.ReadFile();
 			//// Export the project as TDL
-			project.saveTDL(file.getAbsolutePath());
+			//project.saveTDL(file.getAbsolutePath(),);
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(this, "An error occured while exporting the project", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, "An error occured while exporting the traffic lights", "Error", JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 		} finally {
 			setCursor(Cursor.DEFAULT_CURSOR);

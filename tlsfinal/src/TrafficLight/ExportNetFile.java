@@ -30,7 +30,7 @@ public class ExportNetFile {
 
                 String ProgramID = JPanelPhases.GeneralInfo.get(IdJunction).get(0);
                 String offset = JPanelPhases.GeneralInfo.get(IdJunction).get(2);
-                String tlsXml = "<tlLogic id=\"" + id + "\" type=\"static\" programId=\"" + ProgramID + "\" offset=\"" + offset + "\">\n";
+                String tlsXml = "<tlLogic id=\"" + Junc + "\" type=\"static\" programId=\"" + ProgramID + "\" offset=\"" + offset + "\">\n";
                 // Identifica as informações da fase
                 id++;
                 for (String phases : JPanelPhases.PhaseInfo.keySet()) {
@@ -61,7 +61,7 @@ public class ExportNetFile {
     }
 
     public String getPhase(String IdJunction, int Fase, String duration) {
-        String XmlPhase = "<phase duration=\"" + duration + "\" state\"";
+        String XmlPhase = "<phase duration=\"" + duration + "\" state=\"";
         // Identifica as proprias fases
         String state = "";
 
