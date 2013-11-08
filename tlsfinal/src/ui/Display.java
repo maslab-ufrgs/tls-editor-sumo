@@ -180,6 +180,7 @@ public  class Display extends JComponent implements CurrentLayerChangedListener,
         public   Graphics2D graphics2D;
         public   Map<String,String> mapEdgesLanes = new HashMap<String,String>();
         private   List<Polygon2D.Double> auxPoly = new ArrayList<Polygon2D.Double>();
+        private  static int mousepress = 0;
 
 	/**
 	 * Default constructor.
@@ -208,7 +209,7 @@ public  class Display extends JComponent implements CurrentLayerChangedListener,
 
 		scrlVertical.addAdjustmentListener(this);
 		scrlHorizontal.addAdjustmentListener(this);
-
+                
 		// Be notified when the user opens or closes the project
 		Broadcaster.addProjectChangedListener(this);
 	}
@@ -359,19 +360,26 @@ public  class Display extends JComponent implements CurrentLayerChangedListener,
 			return;
 		}
         
-        //if(JPanelPhases.repaint ==1){
-   
-	//	repaint();
 
-        //        }
-
-		
 		if (transformedPoint == null) {
 			return;
 		}
                 
                  // Caso Aperte o Botão Direito do mouse
            
+                
+                if(JPanelPhases.repaint ==1){
+                    //Point a = new Point();
+                   // a.setLocation(this.bounds().getMaxX()-0.0001,bounds().getMaxY()-0.0001);
+                    //Point b = new Point();
+                   // b.setLocation(this.bounds().getMaxX(),bounds().getMaxY());
+                    
+                    //marquee.setFrameFromDiagonal(a, b);
+                    //repaint();
+                    //return;
+                    //transformedPoint = null;
+                }
+                
                
 		RoadNetworkElement elementBelowMouseaux_00 = roadNetwork.PointHitTest(transformedPoint);
 		if((elementBelowMouseaux_00 instanceof Junction)){
@@ -613,12 +621,12 @@ public  class Display extends JComponent implements CurrentLayerChangedListener,
 				if ((getWidth() > roadNetwork.getBounds().width * scale) && (getHeight() > roadNetwork.getBounds().height * scale)) {
 					return;
 				} else {
-					scale -= 1.5;
+					scale -= 0.5;
 				}
 			}
 			// Zoom in
 			else {
-				scale += 1.5;
+				scale += 0.5;
 			}
 
 			// Move the previous center of the map to the center of the display
@@ -833,15 +841,24 @@ public  class Display extends JComponent implements CurrentLayerChangedListener,
 		if (!projectLoaded) {
 			return;
 		}
-
+                
+                //if(JPanelPhases.repaint ==1){
+                   //mousepress = 1;
+                //}else{
+                   //mousepress = 0;
+                //}
+                    
 		// Capture starting point
 		previousMouseLocation = e.getPoint();
-
+                
 		// Transform the point to map coordinates
 		Point2D.Double transformedPoint = TransformPoint(e.getPoint());
 
-                System.out.println("transformedPoint "+transformedPoint.x+" "+transformedPoint.y);
-		if (transformedPoint == null) {
+                //System.out.println("transformedPoint "+transformedPoint.x+" "+transformedPoint.y);
+		
+
+                
+                if (transformedPoint == null) {
 			return;
 		}
 
@@ -902,7 +919,7 @@ public  class Display extends JComponent implements CurrentLayerChangedListener,
 		if (!projectLoaded) {
 			return;
 		}
-
+                
 		switch (tool) {
 		case Pan:
 			// Restore cursor
@@ -1062,6 +1079,7 @@ public  class Display extends JComponent implements CurrentLayerChangedListener,
 	 * layers.
 	 */
 	public void paintComponent(Graphics g) {
+                
 		graphics2D = (Graphics2D) g;
 
 		// Get the clip bounds
@@ -1143,9 +1161,8 @@ public  class Display extends JComponent implements CurrentLayerChangedListener,
 			graphics2D.draw(marquee);
 		}    
 
-                
+                //if(mousepress == 1){
                 ArrayList<Lane> lanes = new ArrayList<>();
-                
                 
                 for ( int k = 0 ; k< JPanelPhases.mapEdgesLanes2.size() ; k++ ){
                         for( Edge ed :roadNetwork.getEdges()){
@@ -1178,6 +1195,7 @@ public  class Display extends JComponent implements CurrentLayerChangedListener,
                     SelectNone();
                     repaint();
                 }
+                //}
     
 	}
             

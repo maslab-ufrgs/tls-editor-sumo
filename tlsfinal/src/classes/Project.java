@@ -417,6 +417,9 @@ public class Project {
 		PrintWriter pw = new PrintWriter(fw);
                 
                 pw.print(Xml);
+                
+                pw.close();
+		fw.close();
                 /*
 		pw.println("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
 		pw.println("<trafficModel name =\"" + simulation.getName() + "\" startingTime =\"" + String.valueOf(simulation.getBeginTime()) + "\" endingTime =\"" + String.valueOf(simulation.getEndTime()) + "\" xmlns=\"http://tempuri.org/TDL.xsd\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" >");

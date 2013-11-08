@@ -31,15 +31,20 @@ public class ExportXmlTrafficLight {
     public Map<String, String> ConnectionsValues = new HashMap<String, String>();
     public Map<String, Integer> ContConnection = new HashMap<String, Integer>();
 
-    public void ReadFile() {
+    public void ReadFile(String path, String nfile) throws IOException {
+        
+        
+                
+        System.out.println("path:"+path);        
         SAXBuilder builder = new SAXBuilder();
         // File xmlFile = new File("Output/teste.xml");
-        File xmlFile = new File("/home/luiz/sumo-0.16.0/docs/examples/sumo/simple_nets/box/box4l/net.net.xml");
+        File xmlFile = new File(path);
         Map<String, List<String>> Junctions = new HashMap<String, List<String>>();
         Map<String, List<String>> Connections = new HashMap<String, List<String>>();
         int flag = 0;
-        String Xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> \n";
+        
         try {
+            String Xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> \n";
             Document document = (Document) builder.build(xmlFile);
 
             Element rootNode = document.getRootElement();
@@ -185,6 +190,16 @@ public class ExportXmlTrafficLight {
             Xml += "</" + rootNode.getName() + "> \n";
 
             System.out.println(Xml);
+            
+            //FileWriter fw = new FileWriter(nfile);
+	    //PrintWriter pw = new PrintWriter(fw);
+        
+            //pw.print(Xml);
+                
+            //pw.close();
+            //fw.close();
+                
+            //
 
         } catch (IOException io) {
             System.out.println("Erro...");
