@@ -27,6 +27,10 @@ import org.jdom2.input.SAXBuilder;
  */
 public class ExportXmlTrafficLight {
 
+    public String junctionname = "";
+    public Map<String, String> ConnectionsValues = new HashMap<String, String>();
+    public Map<String, Integer> ContConnection = new HashMap<String, Integer>();
+
     public void ReadFile() {
         SAXBuilder builder = new SAXBuilder();
         // File xmlFile = new File("Output/teste.xml");
@@ -46,6 +50,7 @@ public class ExportXmlTrafficLight {
 
             Xml += "<" + rootNode.getName();
 
+            // Get Net Information
             for (int i = 0; i < rootNode.getAttributes().size(); i++) {
                 Xml += " " + rootNode.getAttributes().get(i).getName() + "=\""
                         + rootNode.getAttributes().get(i).getValue() + "\" ";
@@ -58,11 +63,84 @@ public class ExportXmlTrafficLight {
                 Element node = (Element) Elements.get(i);
 
 
+                if (node.getName().equals("junction")) {
+                    
+                    
+                    junctionname = node.getAttribute("id").getValue();
+
+                    ConnectionsValues.put(junctionname, node.getAttribute("intLanes").getValue().toString());
+                    ContConnection.put(junctionname, 0);
+
+                    if (!JPanelPhases.GeneralInfo.containsKey(junctionname)) {
+                        ContConnection.remove(junctionname);
+                        ConnectionsValues.remove(junctionname);
+
+                    }
+
+
+                    ExportNetFile aux = new ExportNetFile();
+                    Xml += "\n" + aux.GenerateTlsXmlFile(node.getAttribute("id").getValue()) + "\n";
+
+
+                    //System.out.println("  "+ node.getAttribute("id").getValue());
+
+                }
+
+
+
+
+                // Get Elements
                 Xml += "<" + node.getName();
 
 
+
+
                 for (int j = 0; j < node.getAttributes().size(); j++) {
-                    Xml += " " + node.getAttributes().get(j).getName() + "=\"" + node.getAttributes().get(j).getValue() + "\"";
+
+                    if (node.getName().equals("connection")) {
+
+                        if (node.getAttributes().get(j).getName().equals("state")) {
+                            int auxloc = 0;
+                            for (String key : ConnectionsValues.keySet()) {
+
+                                if (ConnectionsValues.get(key).contains(node.getAttributes().get(j).getValue())) {
+                                Xml += " state=\"o\"";  
+                                auxloc = 1;
+                                }
+                            }
+                            
+                            if(auxloc == 0){
+                              Xml += " " + node.getAttributes().get(j).getName() + "=\"" + node.getAttributes().get(j).getValue() + "\"";  
+                            }
+
+                        } else {
+                            Xml += " " + node.getAttributes().get(j).getName() + "=\"" + node.getAttributes().get(j).getValue() + "\"";
+                        }
+                        if (node.getAttributes().get(j).getName().equals("via")) {
+                            //System.out.println("ConnectionsValues:"+ConnectionsValues);
+                            //System.out.println("Other:"+node.getAttributes().get(j).getValue().toString());
+
+                            String aux = node.getAttributes().get(j).getValue();
+
+                            for (String key : ConnectionsValues.keySet()) {
+
+                                if (ConnectionsValues.get(key).contains(node.getAttributes().get(j).getValue())) {
+                                    //System.out.println("Temmmm");
+
+                                    Xml += " tl=\"" + key + "\" linkIndex=\"" + ContConnection.get(key) + "\"";
+                                    ContConnection.put(key, (ContConnection.get(key) + 1));
+                                    break;
+                                }
+                            }
+
+
+                        }
+
+                    } else {
+                        Xml += " " + node.getAttributes().get(j).getName() + "=\"" + node.getAttributes().get(j).getValue() + "\"";
+                    }
+
+
                     //node.getAttributes()
                 }
 
@@ -78,7 +156,11 @@ public class ExportXmlTrafficLight {
                 for (int k = 0; k < node.getChildren().size(); k++) {
                     Xml += "<" + node.getChildren().get(k).getName() + " ";
                     for (int l = 0; l < node.getChildren().get(k).getAttributes().size(); l++) {
+
+                        //countconnection = 0;
                         Xml += node.getChildren().get(k).getAttributes().get(l).getName() + "=\"" + node.getChildren().get(k).getAttributes().get(l).getValue() + "\" ";
+
+
                     }
 
                     Xml += "/> \n";
