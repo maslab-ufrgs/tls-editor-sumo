@@ -410,10 +410,14 @@ public class Project {
 	 * Exports the traffic definition project in TDL format
 	 * @param path the path to the file name to export
 	 */
-	public void saveTDL(String path) throws Exception {
+	public void saveTDL(String path,String Xml) throws Exception {
+            System.out.println("XML: +\n"+Xml);
+            
 		FileWriter fw = new FileWriter(path);
 		PrintWriter pw = new PrintWriter(fw);
-
+                
+                pw.print(Xml);
+                /*
 		pw.println("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
 		pw.println("<trafficModel name =\"" + simulation.getName() + "\" startingTime =\"" + String.valueOf(simulation.getBeginTime()) + "\" endingTime =\"" + String.valueOf(simulation.getEndTime()) + "\" xmlns=\"http://tempuri.org/TDL.xsd\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" >");
 
@@ -438,6 +442,7 @@ public class Project {
 		pw.println("</trafficLayers>");
 
 		pw.println("</trafficModel>");
+                */
 
 		pw.close();
 		fw.close();

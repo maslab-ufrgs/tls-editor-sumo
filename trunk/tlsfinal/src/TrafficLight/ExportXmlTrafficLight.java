@@ -65,7 +65,6 @@ public class ExportXmlTrafficLight {
 
                 if (node.getName().equals("junction")) {
                     
-                    
                     junctionname = node.getAttribute("id").getValue();
 
                     ConnectionsValues.put(junctionname, node.getAttribute("intLanes").getValue().toString());
@@ -76,6 +75,7 @@ public class ExportXmlTrafficLight {
                         ConnectionsValues.remove(junctionname);
 
                     }
+
 
 
                     ExportNetFile aux = new ExportNetFile();
@@ -184,13 +184,15 @@ public class ExportXmlTrafficLight {
             }
             Xml += "</" + rootNode.getName() + "> \n";
 
-
+            System.out.println(Xml);
 
         } catch (IOException io) {
+            System.out.println("Erro...");
         } catch (JDOMException jdomex) {
+            System.out.println("Erro 2...");
         }
 
-        System.out.println(Xml);
+        
 
     }
 
