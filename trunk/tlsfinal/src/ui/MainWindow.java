@@ -214,7 +214,7 @@ public class MainWindow extends JFrame implements CurrentLayerChangedListener, W
 		Broadcaster.addProjectChangedListener(this);
 
 		addWindowListener(this);
-
+                
 		pnlLayers.addCurrentLayerChangedListener(this);
 		pnlLayers.addCurrentLayerChangedListener(pnlProperties);
 		pnlLayers.addCurrentLayerChangedListener(mapDisplay);
@@ -245,6 +245,7 @@ public class MainWindow extends JFrame implements CurrentLayerChangedListener, W
 	}
 
 	public void ProjectChanged(Project p) {
+            
 		project = p;
 
 		//// If the project has been closed
@@ -1571,8 +1572,8 @@ public class MainWindow extends JFrame implements CurrentLayerChangedListener, W
 			//// Open the project
 			Project openedProject = new Project(file.getAbsolutePath());
 			
-                         ExportXmlTrafficLight ateste = new ExportXmlTrafficLight();
-                         ateste.ReadFile();
+                         
+                         
 		
 			
 			//// Notify any registered listeners that the project has been opened
@@ -1633,7 +1634,9 @@ public class MainWindow extends JFrame implements CurrentLayerChangedListener, W
 			}
 			
                         ExportXmlTrafficLight ateste = new ExportXmlTrafficLight();
-                        ateste.ReadFile();
+                        String paths = (file.getAbsolutePath()+".net.xml");
+                        
+                        ateste.ReadFile(filepath,file.getAbsolutePath());
 			//// Export the project as TDL
 			//project.saveTDL(file.getAbsolutePath(),);
 		} catch (Exception e) {

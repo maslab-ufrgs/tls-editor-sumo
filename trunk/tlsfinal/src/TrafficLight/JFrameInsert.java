@@ -167,11 +167,11 @@ public class JFrameInsert extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Configure Traffic Lights");
         addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowClosing(java.awt.event.WindowEvent evt) {
-                formWindowClosing(evt);
-            }
             public void windowClosed(java.awt.event.WindowEvent evt) {
                 formWindowClosed(evt);
+            }
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
             }
         });
 
@@ -179,7 +179,7 @@ public class JFrameInsert extends javax.swing.JFrame {
         jLabel1.setForeground(java.awt.Color.darkGray);
         jLabel1.setText("Traffic Lights");
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "General Information", 0, 0, null, java.awt.Color.lightGray));
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "General Information", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, null, java.awt.Color.lightGray));
 
         jLabel3.setFont(new java.awt.Font("Ubuntu", 0, 15)); // NOI18N
         jLabel3.setForeground(java.awt.Color.gray);
@@ -244,7 +244,7 @@ public class JFrameInsert extends javax.swing.JFrame {
 
         jSpinner1.getAccessibleContext().setAccessibleName("CycleTime");
 
-        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Phase Setting", 0, 0, null, java.awt.Color.lightGray));
+        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Phase Setting", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, null, java.awt.Color.lightGray));
 
         jLabel4.setFont(new java.awt.Font("Ubuntu", 0, 15)); // NOI18N
         jLabel4.setForeground(java.awt.Color.gray);
@@ -300,7 +300,7 @@ public class JFrameInsert extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Phases", 0, 0, null, java.awt.Color.lightGray));
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Phases", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, null, java.awt.Color.lightGray));
 
         jTabbedPane1.setTabLayoutPolicy(javax.swing.JTabbedPane.SCROLL_TAB_LAYOUT);
         jTabbedPane1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));

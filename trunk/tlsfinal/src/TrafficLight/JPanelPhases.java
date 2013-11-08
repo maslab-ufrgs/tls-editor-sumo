@@ -101,7 +101,7 @@ public class JPanelPhases extends javax.swing.JPanel {
                 Map<Integer,Integer> aux = new HashMap<Integer,Integer>();
                 
                 for( int i =0;i< table.getRowCount();i++){
-                    if(table.getValueAt(i, 0) == true){
+                    if(table.getValueAt(i, 0).equals(true)){
                         aux.put(i,isselect);
                         isselect ++;
                     }
@@ -109,10 +109,10 @@ public class JPanelPhases extends javax.swing.JPanel {
 
 
                         
-                if(table.getValueAt(row, 0) == true && column == 5 ){
+                if(table.getValueAt(row, 0).equals(true) && column == 5 ){
                     
                     
-                    renderer.setBackground(Display.getColor(aux.get(row)));
+                renderer.setBackground(Display.getColor(aux.get(row)));
                 }else{
                 renderer.setBackground(null);    
                 }
@@ -347,14 +347,15 @@ public class JPanelPhases extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-
+        jTable1.repaint();
+        
         mapEdgesLanes2.clear();
         
         jTable1.repaint();
         repaint = 1;
         
         for( int row = 0; row< jTable1.getRowCount(); row++  ){
-            if(jTable1.getValueAt(row, 0)== true){
+            if(jTable1.getValueAt(row, 0).equals(true)){
                 
                 String From = ""+jTable1.getValueAt(row, 1).toString() +"_"+jTable1.getValueAt(row, 3);
                 if(!mapEdgesLanes2.contains(Arrays.asList(jTable1.getValueAt(row, 1).toString(), From))){
@@ -380,7 +381,7 @@ public class JPanelPhases extends javax.swing.JPanel {
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
         for( int row = 0; row< jTable1.getRowCount(); row++  ){
-            if(jTable1.getValueAt(row, 0)== true){
+            if(jTable1.getValueAt(row, 0).equals(true)){
               jTable1.setValueAt(false, row, 0);
             }
         }
