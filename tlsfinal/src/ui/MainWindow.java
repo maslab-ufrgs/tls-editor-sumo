@@ -1513,8 +1513,8 @@ public class MainWindow extends JFrame implements CurrentLayerChangedListener, W
 		if (dlg.getAnswer() == JOptionPane.OK_OPTION) {
 			try {
 				setCursor(Cursor.WAIT_CURSOR);
-                                System.out.println("------- CRIANDO NOVO PROJETO ---------");
-                                System.out.println(dlg.getMapFile().getName()+" : "+dlg.getMapFile().getPath());
+                                //System.out.println("------- CRIANDO NOVO PROJETO ---------");
+                                //System.out.println(dlg.getMapFile().getName()+" : "+dlg.getMapFile().getPath());
 				//// Create the project
                                 
                 ImportXMLTrafficLight trafficlights = new ImportXMLTrafficLight();
@@ -1572,8 +1572,9 @@ public class MainWindow extends JFrame implements CurrentLayerChangedListener, W
 			//// Open the project
 			Project openedProject = new Project(file.getAbsolutePath());
 			
-                         
-                         
+       // Export???
+                         //ExportXmlTrafficLight ateste = new ExportXmlTrafficLight();
+                         //ateste.ReadFile();
 		
 			
 			//// Notify any registered listeners that the project has been opened
@@ -1635,10 +1636,10 @@ public class MainWindow extends JFrame implements CurrentLayerChangedListener, W
 			
                         ExportXmlTrafficLight ateste = new ExportXmlTrafficLight();
                         String paths = (file.getAbsolutePath()+".net.xml");
-                        
-                        ateste.ReadFile(filepath,file.getAbsolutePath());
+                        //ateste.ReadFile(filepath,file.getAbsolutePath());
 			//// Export the project as TDL
-			//project.saveTDL(file.getAbsolutePath(),);
+                      
+			project.saveTDL(file.getAbsolutePath(),ateste.ReadFile(filepath));
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(this, "An error occured while exporting the traffic lights", "Error", JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();

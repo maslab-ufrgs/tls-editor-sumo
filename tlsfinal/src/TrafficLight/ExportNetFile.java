@@ -27,14 +27,12 @@ public class ExportNetFile {
         for (String IdJunction : JPanelPhases.GeneralInfo.keySet()) {
 
             if (IdJunction.equals(Junc)) {
-
                 String ProgramID = JPanelPhases.GeneralInfo.get(IdJunction).get(0);
-                String offset = JPanelPhases.GeneralInfo.get(IdJunction).get(2);
+                String offset = JPanelPhases.GeneralInfo.get(IdJunction).get(1);
                 String tlsXml = "<tlLogic id=\"" + Junc + "\" type=\"static\" programId=\"" + ProgramID + "\" offset=\"" + offset + "\">\n";
                 // Identifica as informações da fase
                 id++;
                 for (String phases : JPanelPhases.PhaseInfo.keySet()) {
-
                     // Verificam se estão na mesma conection
                     if (IdJunction == phases) {
                         // Identifica todas as fases
@@ -48,7 +46,7 @@ public class ExportNetFile {
                         }
                     }
                 }
-                tlsXml = tlsXml + "</tlLogic>";
+                tlsXml = tlsXml + "</tlLogic> \n";
                 xml = tlsXml;
                 //System.out.println(tlsXml);
 

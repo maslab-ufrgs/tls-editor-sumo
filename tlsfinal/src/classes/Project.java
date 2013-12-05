@@ -411,7 +411,7 @@ public class Project {
 	 * @param path the path to the file name to export
 	 */
 	public void saveTDL(String path,String Xml) throws Exception {
-            System.out.println("XML: +\n"+Xml);
+            
             
 		FileWriter fw = new FileWriter(path);
 		PrintWriter pw = new PrintWriter(fw);
