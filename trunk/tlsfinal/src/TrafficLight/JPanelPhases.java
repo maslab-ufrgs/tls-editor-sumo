@@ -4,28 +4,15 @@
  */
 package TrafficLight;
 
-import static TrafficLight.JFrameInsert.Id_Junction;
 import classes.Project;
-import java.awt.Color;
 import java.awt.Component;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.geom.Point2D;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.CellEditor;
-import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableRowSorter;
 import ui.Display;
 
 /**
@@ -38,7 +25,7 @@ public class JPanelPhases extends javax.swing.JPanel {
      * Creates new form JPanelPhases
      */
     private int len;
-    public static  String[] columnNames = {"","From Edge", "To Edge","From Lane","To Lane","Color"};  
+    public static  String[] columnNames = {"Open","From Edge", "To Edge","From Lane","To Lane","Color"};  
     public static List<List<String>> mapEdgesLanes2 = new ArrayList<List<String>>();
             ///Map<String,String> mapEdgesLanes2 = new HashMap<String,String>();
     public static int repaint = 0;
@@ -50,13 +37,14 @@ public class JPanelPhases extends javax.swing.JPanel {
     public static Map<String, List<List<String>>> PhaseInfo = new HashMap<String, List<List<String>>>();
     public static Map<String, List<List<String>>> SavedPhaseInfo = new HashMap<String, List<List<String>>>();
     public static Map<String, List<JTable>> PhaseTabel = new HashMap<String, List<JTable>>();
+
        
      //public Map<String, Map <String>> Phasesinf = new HashMap<String, Map <String>>;
     
     
     
     public void setlen(String Conectionname){
-        Map<String, List<List<String>>> InformationsNET = Project.getCurrentlyLoadedProject().getFromTo();
+        Map<String, List<List<String>>> InformationsNET  = InformationsNET = Project.getCurrentlyLoadedProject().getFromTo();
         for( String keys : InformationsNET.keySet() ){
             if(keys.equals(Conectionname)){
              this.len = InformationsNET.get(keys).size();
@@ -68,7 +56,7 @@ public class JPanelPhases extends javax.swing.JPanel {
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             data,
             new String [] {
-                "", "From Edge", "To Edge", "From Lane", "To Lane", "Color"
+                "Open", "From Edge", "To Edge", "From Lane", "To Lane", "Color"
             }
         ) {
             Class[] types = new Class [] {
@@ -142,10 +130,9 @@ public class JPanelPhases extends javax.swing.JPanel {
     public void UpdateSelect(int index, String Id_Junction){
         
         if(PhaseTabel.containsKey(Id_Junction)){
-                       System.out.println("-----------Phase"+(index)+":");
                        if(PhaseTabel.get(Id_Junction).get(index)!=null){
                        for( int i =0;i< PhaseTabel.get(Id_Junction).get(index).getRowCount();i++){
-                           System.out.print(" "+PhaseTabel.get(Id_Junction).get(index).getValueAt(i, 0));
+                           //System.out.print(" "+PhaseTabel.get(Id_Junction).get(index).getValueAt(i, 0));
                            jTable1.setValueAt(PhaseTabel.get(Id_Junction).get(index).getValueAt(i, 0), i, 0);
                        }
             }
@@ -158,6 +145,7 @@ public class JPanelPhases extends javax.swing.JPanel {
         setlen(Conectionname);
         initComponents();
         data = InsertValues(Conectionname,phasesnumber);
+
         updateTable(data);
 
     }
@@ -168,7 +156,6 @@ public class JPanelPhases extends javax.swing.JPanel {
      }
      
      public void setJTable(JTable tabel){
-         System.out.println("Aquiiii");
          
          //jTable1 = tabel;
          
@@ -194,62 +181,79 @@ public class JPanelPhases extends javax.swing.JPanel {
          return data;
      }
     
+     public List<List<String>> OrdenarList (List<List<String>> inList){
+         //System.out.println("inList: "+inList);
+         List<List<String>> NewauxList = new ArrayList<List<String>>();
+         
+         for( List<String>  outvalues : inList ){
+             int m = 0;
+             List<String> listString = new ArrayList<String>();
+             for( List<String>  values : inList ){
+                 if(!NewauxList.contains(values)){
+                  if ( m == 0){listString = values; m=1; }else{
+                        // Compara FromEdge - se for menor atualiza
+                         if( listString.get(0).toString().compareToIgnoreCase(values.get(0).toString()) > 0){
+                             listString = values;
+                         } else {
+                             // Compara FromEdge - se forem iguais - verifica o To Edge
+                             if(listString.get(0).toString().compareToIgnoreCase(values.get(0).toString()) == 0){
+                                // Compara ToEdge - se for menor atualiza
+                                if(listString.get(1).toString().compareToIgnoreCase(values.get(1).toString()) > 0  ){
+                                    listString = values; 
+                                }else{
+                                     // Compara ToEdge - se forem iguais - verifica FromLane
+                                     if(listString.get(1).toString().compareToIgnoreCase(values.get(1).toString()) == 0){
+                                        // Compara FromLane
+                                        if( listString.get(2).toString().compareToIgnoreCase(values.get(2).toString()) > 0 ){
+                                            listString = values; 
+                                        }else{
+                                            // Compara FromLane - se forem iguais - verifica o To Lane
+                                            if( listString.get(2).toString().compareToIgnoreCase(values.get(2).toString()) == 0 ){
+                                                if( listString.get(3).toString().compareToIgnoreCase(values.get(3).toString()) > 0  ){
+                                                 listString = values; 
+                                                }
+                                            }
+                                        }
+                                     }
+                                }
+                             }
+                         }
+                  }
+                 }   
+         }
+             if(!NewauxList.contains(listString)){
+                NewauxList.add(listString);
+             }
+         }
+
+         return NewauxList;
+     }
      
     public  Object[][] InsertValues(String Conectionname, int PhasesCount){
         Object[][] data = new Object[len][7];
         
-        Map<String, List<List<String>>> InformationsNET = Project.getCurrentlyLoadedProject().getFromTo();
+         Map<String, List<List<String>>> InformationsNET  = Project.getCurrentlyLoadedProject().getFromTo();
         // Map<String, List<JTable>> PhaseTabel
-        System.out.println("PhasesCount:"+PhasesCount);
-        System.out.println("Conection:"+Conectionname);
-
+        //System.out.println(Conectionname+ "----"+InformationsNET);
         for( String keys : InformationsNET.keySet() ){
             
             if(keys.equals(Conectionname)){
-               List<List<String>> auxList = InformationsNET.get(keys);
-               int i = 0;
-               for( List<String>  values : auxList ){
-
-                   
+               //System.out.println("----"+InformationsNET.get(keys));
+               List<List<String>> auxList = InformationsNET.get(keys);      
+               int i = 0;       
+               //System.out.println("auxList"+auxList);
+               for( List<String>  values : OrdenarList(InformationsNET.get(keys)) ){
                    data[i][0] = false; // Visible
                    data[i][1] = values.get(0); // From Edge
                    data[i][2] = values.get(1); // To Edge
                    data[i][3] = values.get(2); // From Lane
                    data[i][4] = values.get(3); // To Lane
                    data[i][5] = "     ";
-    
                    // 4 - reference
                    i++;
-             
                }
-              
-            }
-            
- 
-        }
-        
-        /*
-        if(PhaseTabel.containsKey(Conectionname)){
-            int fases =PhaseTabel.get(Conectionname).size();
-            System.out.println("Phase:"+fases);
-            
-             for(int j=0;j<fases;j++){
-                       System.out.println("-----------Phase"+(j)+":\n");
-                       if(PhaseTabel.get(Conectionname).get(j)!=null){
-                       if(PhasesCount == j){
-                       for( int i =0;i< PhaseTabel.get(Conectionname).get(j).getRowCount();i++){
-                           data[i][0] = PhaseTabel.get(Conectionname).get(j).getValueAt(i, 0);
-                           System.out.print(" "+PhaseTabel.get(Conectionname).get(j).getValueAt(i, 0));
-                           break;
-                       }
-                       }
-            }
-           }
-           
-        }
-        */
-        
-        //jTable1.
+            }                 
+        }        
        return data; 
     }
 
@@ -326,23 +330,22 @@ public class JPanelPhases extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 633, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(162, Short.MAX_VALUE)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(39, 39, 39)
                 .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(172, 172, 172))
+            .addComponent(jScrollPane1)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 131, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
     }// </editor-fold>//GEN-END:initComponents
 

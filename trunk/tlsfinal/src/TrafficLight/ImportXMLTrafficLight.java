@@ -1,6 +1,7 @@
 package TrafficLight;
 
 
+import static TrafficLight.ProgressMonitorExample.pbar;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,6 +9,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.swing.ProgressMonitor;
 
 import org.jdom2.Document;
 /*import org.jdom.Document;
@@ -39,6 +41,7 @@ public class ImportXMLTrafficLight {
 		Map<String, List<String>> Junctions = new HashMap<String, List<String>>();
 		Map<String, List<String>> Connections = new HashMap<String, List<String>>();
 		
+                
                 try {
 			Document document = (Document) builder.build(xmlFile);
 			Element rootNode = document.getRootElement();
@@ -46,8 +49,6 @@ public class ImportXMLTrafficLight {
 			// Obtém todas as juctions do arquivo de rede
 			@SuppressWarnings("rawtypes")
 			List list = rootNode.getChildren("junction");
- 
-		
                         
                         for (int i = 0; i < list.size(); i++) {
 				Element node = (Element) list.get(i);
@@ -114,17 +115,6 @@ public class ImportXMLTrafficLight {
 		return null;
 	}
 	
-	public String GetXMLDEPARA() {
-		// <TrafficLight id=" " FromTo=""/>
-		String XML_FROM_TO = "";
-		for( String Junction :From_To.keySet()){
-			XML_FROM_TO = XML_FROM_TO + "\n <TrafficLight id=\""+Junction+"\" FromTo=\"";
-			for(List<String> i : From_To.get(Junction)){ 
-				XML_FROM_TO = XML_FROM_TO +" " + i.get(0)+" "+i.get(1)+" "+i.get(2)+" "+i.get(3)+ " "+i.get(4)+ " "+i.get(5) ;
-			}
-			XML_FROM_TO = XML_FROM_TO +"\"/>";
-		}
-		return XML_FROM_TO;
-	}
+
 	
 }
