@@ -393,10 +393,11 @@ public  class Display extends JComponent implements CurrentLayerChangedListener,
                 // 2 clicks
                  if ( Isjuction && (e.getClickCount() == 2) && (e.getButton() == MouseEvent.BUTTON1)) {  
                      if(JFrameInsert.StatusWindows ==0){
-                         JFrameInsert.StatusWindows =1;
+                     JFrameInsert.StatusWindows =1;
                      JFrameInsert a =  new TrafficLight.JFrameInsert();
                      
                      JunctionName = elementBelowMouseaux_00.getId();
+                     
                      a.setID(JunctionName);  
                      a.show();
                      }
@@ -412,7 +413,7 @@ public  class Display extends JComponent implements CurrentLayerChangedListener,
                     
                 	//...where the GUI is constructed:  
                     //Create the popup menu.  
-                    System.out.println(" botao direito pressionado");
+                    ////System.out.println(" botao direito pressionado");
                     JPopupMenu popup = new JPopupMenu();  
                     JMenuItem menuItem1 = new JMenuItem("Insert new Traffic Lights"); 
                     
@@ -425,8 +426,10 @@ public  class Display extends JComponent implements CurrentLayerChangedListener,
                        if(JFrameInsert.StatusWindows ==0){
                            JFrameInsert.StatusWindows =1;
                             JFrameInsert a =  new TrafficLight.JFrameInsert();
+                            
                             a.setID(JunctionName);
                             a.show();
+                            
                             //a.dispose();
                         }
                         }
@@ -854,7 +857,7 @@ public  class Display extends JComponent implements CurrentLayerChangedListener,
 		// Transform the point to map coordinates
 		Point2D.Double transformedPoint = TransformPoint(e.getPoint());
 
-                //System.out.println("transformedPoint "+transformedPoint.x+" "+transformedPoint.y);
+                ////System.out.println("transformedPoint "+transformedPoint.x+" "+transformedPoint.y);
 		
 
                 

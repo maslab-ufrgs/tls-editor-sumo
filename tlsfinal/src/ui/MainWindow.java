@@ -4,6 +4,7 @@ import TrafficLight.ExportNetFile;
 import TrafficLight.ExportXmlTrafficLight;
 import TrafficLight.ImportXMLTrafficLight;
 import TrafficLight.JFrameInsert;
+import TrafficLight.JPanelPhases;
 import helpers.ApplicationSettings;
 import helpers.Broadcaster;
 import interfaces.CurrentLayerChangedListener;
@@ -1518,12 +1519,16 @@ public class MainWindow extends JFrame implements CurrentLayerChangedListener, W
 				//// Create the project
                                 
                 ImportXMLTrafficLight trafficlights = new ImportXMLTrafficLight();
-                trafficlights.GetFromToInformation(dlg.getMapFile().getPath());
                 filepath = dlg.getMapFile().getPath();
                 
+                trafficlights.GetFromToInformation(filepath);
                 
+                            
+           
                 
 	        Project newProject = new Project(dlg.getProjectPath(), dlg.getMapFile(), trafficlights.From_To);
+                newProject.setFromTo(trafficlights.From_To);
+                
                 //project.setpathFileNew(filepath); 
                                
                                 
@@ -1571,6 +1576,22 @@ public class MainWindow extends JFrame implements CurrentLayerChangedListener, W
 
 			//// Open the project
 			Project openedProject = new Project(file.getAbsolutePath());
+                        JPanelPhases.GeneralInfo = openedProject.getGeneralInfo();
+                        JPanelPhases.PhaseInfo = openedProject.getPhaseInfo();
+                        JPanelPhases.SavedPhaseInfo = openedProject.getSavedPhaseInfo();
+                        JFrameInsert.ControlYellowTime = openedProject.getControlYellowTime();
+                        JPanelPhases.Phasedatas = openedProject.getPhaseTabelModel();
+                        ImportXMLTrafficLight.ConvertConnection = openedProject.getConvertConnection();
+                        MainWindow.filepath = openedProject.getpathFileNew();
+                        System.out.println("Abrindo Phasedatas :"+JPanelPhases.Phasedatas);
+                        
+                        //System.out.println("Path:"+MainWindow.filepath);
+                
+                        //System.out.println("PhaseInfo:"+JPanelPhases.PhaseInfo);
+                        //System.out.println("GeneralInfo:"+JPanelPhases.GeneralInfo);
+                        //System.out.println("SavedPhase:"+JPanelPhases.SavedPhaseInfo);
+                        
+                        //openedProject.get
 			
        // Export???
                          //ExportXmlTrafficLight ateste = new ExportXmlTrafficLight();
@@ -1595,8 +1616,16 @@ public class MainWindow extends JFrame implements CurrentLayerChangedListener, W
 	private void SaveProject() {
 		try {
 			setCursor(Cursor.WAIT_CURSOR);
-
+                        project.setGeneralInfo(JPanelPhases.GeneralInfo);
+                        project.setPhaseInfo(JPanelPhases.PhaseInfo);
+                        project.setSavedPhaseInfo(JPanelPhases.SavedPhaseInfo);
+                        project.setControlYellowTime(JFrameInsert.ControlYellowTime);
+                        project.setpathFileNew(MainWindow.filepath);
+                        project.setPhaseTabelModel(JPanelPhases.Phasedatas);
+                        project.setConvertConnection(ImportXMLTrafficLight.ConvertConnection);
+                        System.out.println("Salvando Phasedatas :"+JPanelPhases.Phasedatas);
 			project.Save();
+                        
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(this, "An error occured while saving the project", "Error", JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
