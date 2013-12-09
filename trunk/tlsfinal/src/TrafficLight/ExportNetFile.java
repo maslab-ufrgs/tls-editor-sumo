@@ -34,21 +34,23 @@ public class ExportNetFile {
                 id++;
                 for (String phases : JPanelPhases.PhaseInfo.keySet()) {
                     // Verificam se estão na mesma conection
+                    
                     if (IdJunction == phases) {
                         // Identifica todas as fases
-                        //System.out.println("JPanelPhases.PhaseInfo.get(phases):"+JPanelPhases.PhaseInfo.get(phases));
+                        ////System.out.println("JPanelPhases.PhaseInfo.get(phases):"+JPanelPhases.PhaseInfo.get(phases));
                         for (int i = 0; i < JPanelPhases.PhaseInfo.get(phases).size(); i++) {
-                            //System.out.println("Phase:"+i+" Total:"+JPanelPhases.PhaseInfo.get(phases).get(0).size());
+                            ////System.out.println("Phase:"+i+" Total:"+JPanelPhases.PhaseInfo.get(phases).get(0).size());
                             String duration = JPanelPhases.PhaseInfo.get(phases).get(i).get(2);
 
                             tlsXml = tlsXml + getPhase(IdJunction, i, duration);
 
                         }
                     }
+                    
                 }
                 tlsXml = tlsXml + "</tlLogic> \n";
                 xml = tlsXml;
-                //System.out.println(tlsXml);
+                ////System.out.println(tlsXml);
 
             }
         }
@@ -75,8 +77,21 @@ public class ExportNetFile {
                     }
                 }
                 XmlPhase = XmlPhase + state + "\" />\n";
+                String XmlPhaseYellow = "";
+                if(JFrameInsert.ControlYellowTime.containsKey(IdJunction) && Integer.parseInt(JFrameInsert.ControlYellowTime.get(IdJunction)) > 0){
+                    if(state.contains("G") || state.contains("g")){
+                        XmlPhaseYellow = "<phase duration=\"" + JFrameInsert.ControlYellowTime.get(IdJunction) + "\" state=\"";
+                        String Yellow= "";
+                        Yellow = state.replaceAll("G", "y");
+                        Yellow = Yellow.replaceAll("g", "y");
+                        XmlPhaseYellow = XmlPhaseYellow + Yellow + "\" />\n"; 
+                    }
+                }
+                XmlPhase = XmlPhase + XmlPhaseYellow;
                 return XmlPhase;
             }
+        }else{
+            XmlPhase = XmlPhase + state + "\" />\n";
         }
 
 

@@ -1,7 +1,9 @@
 package classes;
 
 import TrafficLight.ImportXMLTrafficLight;
+import TrafficLight.JFrameInsert;
 import TrafficLight.JPanelPhases;
+import static TrafficLight.JPanelPhases.PhaseTabel;
 import enums.TrafficDefinitionLayerType;
 
 import java.io.*;
@@ -9,8 +11,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.swing.JFrame;
 
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.table.TableModel;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -108,6 +113,10 @@ public class Project {
         private Map<String, List<String>> GeneralInfo = new HashMap<String, List<String>>();  
         private Map<String, List<List<String>>> PhaseInfo = new HashMap<String, List<List<String>>>();
         private Map<String, List<List<String>>> SavedPhaseInfo = new HashMap<String, List<List<String>>>();
+        private Map<String, String> ControlYellowTime = new HashMap<String, String>(); 
+        private Map<String, List<List<String>>> Phasedatas = new HashMap<String, List<List<String>>>();
+         private Map<String, String> ConvertConnection = new HashMap<String, String>();
+        
         private String pathFileNew = "";
     //public static Map<String, List<JTable>> PhaseTabel = new HashMap<String, List<JTable>>();
 	
@@ -139,29 +148,16 @@ public class Project {
 		activityBasedTrafficVehicleSelection = (TypeSelection<VehicleType>) in.readObject();
 
                 
-	   setFromTo((Map<String, List<List<String>>>) in.readObject());
-           setpathFileNew((String) in.readObject());
-            /*    
-            try {
-                setGeneralInfo((Map<String, List<String>>) in.readObject());
-            } catch (Exception e) {
-            }
-                try {
-                setPhaseInfo((Map<String, List<List<String>>>) in.readObject());
-            } catch (Exception e) {
-            }
-                try {
-                setSavedPhaseInfo((Map<String, List<List<String>>>) in.readObject());
-            } catch (Exception e) {
-            }
-            * */
-                
-                
-		//From_To =  ;
-		
+                From_To = (Map<String, List<List<String>>>) in.readObject();
+                pathFileNew = (String) in.readObject();
+                GeneralInfo = (Map<String, List<String>>) in.readObject();
+                PhaseInfo = (Map<String, List<List<String>>>) in.readObject();
+                SavedPhaseInfo = (Map<String, List<List<String>>>) in.readObject();
+                ControlYellowTime = (Map<String, String>) in.readObject();
+                Phasedatas = (Map<String, List<List<String>>>) in.readObject();
+                ConvertConnection = (Map<String, String>) in.readObject();
 		in.close();
 		
-		//System.out.println("Abrindo FROM_TO......:"+From_To);
 
 		// Set the static currently loaded project variable
 		Project.currentlyLoadedProject = this;
@@ -178,7 +174,8 @@ public class Project {
 	 *             If an error has occured during the project creation process.
 	 */
 	public Project(String projectPath, File roadNetworkFile, Map<String, List<List<String>>> From_To2) throws Exception {
-		// Set the static currently loaded project variable
+
+                // Set the static currently loaded project variable
 		Project.currentlyLoadedProject = this;
 
 		// Parse the road network xml file
@@ -249,13 +246,18 @@ public class Project {
 		out.writeObject(defaultJobType);
 		out.writeObject(defaultVehicleType);
 		out.writeObject(activityBasedTrafficVehicleSelection);
+                // Alterações aqui
 		out.writeObject(From_To2);
                 out.writeObject(MainWindow.filepath);
-               //out.writeObject(JPanelPhases.GeneralInfo);
-               // out.writeObject(JPanelPhases.PhaseInfo);
-               // out.writeObject(JPanelPhases.SavedPhaseInfo);
-                setpathFileNew(MainWindow.filepath);
-		setFromTo(From_To2);
+                out.writeObject(JPanelPhases.GeneralInfo);
+                out.writeObject(JPanelPhases.PhaseInfo);
+                out.writeObject(JPanelPhases.SavedPhaseInfo);
+                out.writeObject(ControlYellowTime);
+                out.writeObject(Phasedatas);
+                out.writeObject(ConvertConnection);
+                
+
+		
 		out.close();
 	}
 
@@ -416,37 +418,9 @@ public class Project {
 		FileWriter fw = new FileWriter(path);
 		PrintWriter pw = new PrintWriter(fw);
                 
-                pw.print(Xml);
-                
+                pw.print(Xml);               
                 pw.close();
 		fw.close();
-                /*
-		pw.println("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
-		pw.println("<trafficModel name =\"" + simulation.getName() + "\" startingTime =\"" + String.valueOf(simulation.getBeginTime()) + "\" endingTime =\"" + String.valueOf(simulation.getEndTime()) + "\" xmlns=\"http://tempuri.org/TDL.xsd\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" >");
-
-		pw.println("<jobTypes>");
-		for (JobType j : jobTypes) {
-			pw.println("<job name=\"" + j.getName() + "\" startingTime=\"" + String.valueOf(j.getStartingTime()) + "\" endingTime=\"" + String.valueOf(j.getEndingTime()) + "\"/>");
-		}
-		pw.println("</jobTypes>");
-
-		pw.println("<vehicleTypes>");
-		for (VehicleType v : vehicleTypes) {
-			pw.println("<vehicle name=\"" + v.getName() + "\" acceleration=\"" + String.valueOf(v.getAcceleration()) + "\" deceleration=\"" + String.valueOf(v.getDeceleration()) + "\" length=\"" + String.valueOf(v.getLength()) + "\" maximumSpeed=\"" + String.valueOf(v.getMaximumSpeed()) + "\" driverImperfection=\"" + String.valueOf(v.getDriverImperfection()) + "\" />");
-		}
-		pw.println("</vehicleTypes>");
-
-		pw.print(XMLHelpers.vehicleSelectionToXML("activityBasedTrafficVehicleSelection", activityBasedTrafficVehicleSelection));
-
-		pw.println("<trafficLayers>");
-		for (TrafficDefinitionLayer tdl : trafficLayers) {
-			pw.print(tdl.toXML());
-		}
-		pw.println("</trafficLayers>");
-
-		pw.println("</trafficModel>");
-                */
-
 		pw.close();
 		fw.close();
 	}
@@ -473,13 +447,15 @@ public class Project {
 		out.writeObject(defaultVehicleType);
 		out.writeObject(activityBasedTrafficVehicleSelection);
 		// Alterações aqui
-		//System.out.println("Salvando:"+From_To);
 		out.writeObject(From_To);
-                out.writeObject(filepath);
-                //
-                //out.writeObject(JPanelPhases.GeneralInfo);
-                //out.writeObject(JPanelPhases.PhaseInfo);
-                //out.writeObject(JPanelPhases.SavedPhaseInfo);
+                out.writeObject(MainWindow.filepath);
+                out.writeObject(JPanelPhases.GeneralInfo);
+                out.writeObject(JPanelPhases.PhaseInfo);
+                out.writeObject(JPanelPhases.SavedPhaseInfo);
+                out.writeObject(ControlYellowTime);
+                out.writeObject(Phasedatas);
+                out.writeObject(ConvertConnection);
+
 		out.close();
 	}
 
@@ -494,9 +470,18 @@ public class Project {
 	 */
 
 	public void SaveAs(String path) throws Exception {
+               
+               setGeneralInfo(JPanelPhases.GeneralInfo);
+               setPhaseInfo(JPanelPhases.PhaseInfo);
+               setSavedPhaseInfo(JPanelPhases.SavedPhaseInfo);
+               setControlYellowTime(JFrameInsert.ControlYellowTime);
+               setPhaseTabelModel(JPanelPhases.Phasedatas);
+               setpathFileNew(MainWindow.filepath);
+               setConvertConnection(ImportXMLTrafficLight.ConvertConnection);
+               
 
 		fileName = path;
-
+                
 		Save();
 	}
 
@@ -554,18 +539,19 @@ public class Project {
         
         public void setGeneralInfo(Map<String, List<String>> GeneralInfo){
             this.GeneralInfo = GeneralInfo;
-            JPanelPhases.GeneralInfo = getGeneralInfo();
+            
             
         }
         
-        public void setPhaseInfo(Map<String, List<List<String>>>  PhaseInfo){
-            this.PhaseInfo = PhaseInfo;
-            JPanelPhases.PhaseInfo = getPhaseInfo();
-        }
+        public void setPhaseInfo(Map<String, List<List<String>>>  PhaseInfo){this.PhaseInfo = PhaseInfo;}
+        
         public void setSavedPhaseInfo(Map<String, List<List<String>>> SavedPhaseInfo){
             this.SavedPhaseInfo = SavedPhaseInfo;
-            JPanelPhases.SavedPhaseInfo = getSavedPhaseInfo();
-            
+           
+        }
+        
+       public void setControlYellowTime(Map<String, String> ControlYellowTime) {
+           this.ControlYellowTime = ControlYellowTime;
         }
         
         
@@ -573,9 +559,7 @@ public class Project {
             return GeneralInfo;
         }
         
-        public Map<String, List<List<String>>> getPhaseInfo( ){
-            return PhaseInfo;
-        }
+        public Map<String, List<List<String>>> getPhaseInfo( ){return PhaseInfo;}
         public Map<String, List<List<String>>> getSavedPhaseInfo( ){
             return SavedPhaseInfo ;
         }
@@ -584,9 +568,29 @@ public class Project {
             return pathFileNew;
         }
         
+        public Map<String, String> getControlYellowTime() {
+            return ControlYellowTime;
+        }
+        
         public void setpathFileNew(String pathFileNew){
             this.pathFileNew = pathFileNew;
         }
+
+        public Map<String, List<List<String>>> getPhaseTabelModel() {
+            return Phasedatas;
+        }
         
+        public void setPhaseTabelModel(Map<String, List<List<String>>> Phasedatas){
+            this.Phasedatas = Phasedatas;
+        }
+        
+        public Map<String, String> getConvertConnection() {
+            return ConvertConnection;
+        }
+        
+        public void setConvertConnection( Map<String, String> ConvertConnection){
+            this.ConvertConnection = ConvertConnection;
+        }
+        //out.writeObject(ConvertConnection);
 }
 

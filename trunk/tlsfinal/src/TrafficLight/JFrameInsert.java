@@ -1,35 +1,21 @@
 package TrafficLight;
 
 import static TrafficLight.JPanelPhases.PhaseTabel;
+import static TrafficLight.JPanelPhases.Phasedatas;
 import java.awt.Component;
-import java.awt.ComponentOrientation;
-import java.awt.Graphics2D;
-import java.awt.GridBagConstraints;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.AbstractList;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
-//import sun.awt.DisplayChangedListener;
-import ui.Display;
-
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
 /**
  *
  * @author luiz
  */
 public class JFrameInsert extends javax.swing.JFrame {
-
     /**
      * Creates new form JFrameInsert
      */
@@ -37,24 +23,27 @@ public class JFrameInsert extends javax.swing.JFrame {
     public static int StatusWindows = 0;
     public static int OnTabbedPane = 0;
     public int phasetime = 0;
-    public int PhasesCount = 0;
+    public static int PhasesCount = 0;
     private Component JTabbednTop;
     public int phases = 0; 
+    public static Map<String, String> ControlYellowTime = new HashMap<String, String>(); 
     
     public JFrameInsert() {
         PhasesCount = 0;
         if(!JPanelPhases.SavedPhaseInfo.isEmpty()){
-        
             JPanelPhases.PhaseInfo = JPanelPhases.SavedPhaseInfo;
             PhasesCount = 0;
             if(JPanelPhases.PhaseInfo.containsKey(Id_Junction)){
-                PhasesCount = JPanelPhases.PhaseInfo.get(Id_Junction).size();
+                PhasesCount = Phasedatas.get(Id_Junction).size();
             }
         }else{
             phases = 0;
+            
             JPanelPhases.PhaseInfo = new HashMap<String, List<List<String>>>();;
         }
         
+        
+
         initComponents();
         
         if(!JPanelPhases.SavedPhaseInfo.isEmpty()){
@@ -66,8 +55,20 @@ public class JFrameInsert extends javax.swing.JFrame {
         if(!JPanelPhases.PhaseTabel.isEmpty()){
             jButton4.setEnabled(true);
         }
- 
-        
+        if(ControlYellowTime.containsKey(Id_Junction)){
+                int auxYellow=Integer.parseInt(ControlYellowTime.get(Id_Junction).toString());
+
+                if(ControlYellowTime.containsKey(Id_Junction)){
+                jCheckBox1.setSelected(true);
+                jSpinner5.setEnabled(true);
+                jSpinner5.setValue(auxYellow);
+                jSpinner5.setVisible(true);
+                }
+        }
+        if(JPanelPhases.PhaseInfo.containsKey(Id_Junction)){
+                PhasesCount = Phasedatas.get(Id_Junction).size();
+        }
+
     }
     
     
@@ -80,43 +81,60 @@ public class JFrameInsert extends javax.swing.JFrame {
         jTextField3.setText(id);
         jTextField3.setHorizontalAlignment(jTextField3.CENTER);
         jTextField3.setEnabled(false);
-        //System.out.println("Iniciando Panel");
-        //System.out.println("JPanelPHASE: "+JPanelPhases.GeneralInfo );
-
         UpdateSaveInfo(id);
     }
     
     public void UpdateSaveInfo(String id){
         // Reload JPanelPhases.GeneralInfo
+        
         if(id != null && JPanelPhases.GeneralInfo.containsKey(id)){
             List<String> aux = JPanelPhases.GeneralInfo.get(id);
-            //System.out.println("Aux:"+aux);
+            //////System.out.println("Aux:"+aux);
             jTextField1.setText(aux.get(0));
             //jSpinner1.setValue(Integer.parseInt(aux.get(1)));
             jSpinner3.setValue(Integer.parseInt(aux.get(1))); 
+            
+            if(ControlYellowTime.containsKey(id)){
+                int auxYellow=Integer.parseInt(ControlYellowTime.get(id).toString());
+
+                if(ControlYellowTime.containsKey(id)){
+                jCheckBox1.setSelected(true);
+                jSpinner5.setEnabled(true);
+                jSpinner5.setValue(auxYellow);
+                jSpinner5.setVisible(true);
+                }
+            }
+            
         }
 
-        
-        
-        //System.out.println("Carregando Tabelas...");
-
-        if(id != null && JPanelPhases.PhaseInfo.get(id) != null &&JPanelPhases.PhaseInfo.containsKey(id)){
-            //System.out.println("Existe Informações:"+JPanelPhases.PhaseInfo.get(id).size()); 
-            
-            
-             int listsize = JPanelPhases.PhaseInfo.get(id).size();             
-             //System.out.println("Size: "+ listsize);
-             for(int i=0; i<listsize;i++){
-               String name = JPanelPhases.PhaseInfo.get(id).get(i).get(0); // name
-               addTab(jTabbedPane1,name,i); 
-             }
+        if(id != null && JPanelPhases.PhaseInfo.get(id) != null && JPanelPhases.PhaseInfo.containsKey(id)){
+             int listsize = JPanelPhases.PhaseInfo.get(id).size();  
+             ////System.out.println("Recarregando Dados....:"+id);
              
+             for(int i=0; i<listsize;i++){
+               addTab(jTabbedPane1,id,i);
+             }
              
              jTextField4.setEnabled(true);
              jSpinner4.setEnabled(true);
              jTextField2.setText("");
              jSpinner2.setValue(0);
          }
+        
+        if(ControlYellowTime.containsKey(id)){
+                int auxYellow=Integer.parseInt(ControlYellowTime.get(id).toString());
+
+                if(ControlYellowTime.containsKey(id)){
+                jCheckBox1.setSelected(true);
+                jSpinner5.setEnabled(true);
+                jSpinner5.setValue(auxYellow);
+                jSpinner5.setVisible(true);
+                }
+        }
+        
+        ////System.out.println("ControlYellowTime:"+ControlYellowTime);
+        
+        
         
     }
 
@@ -167,11 +185,11 @@ public class JFrameInsert extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Configure Traffic Lights");
         addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowClosed(java.awt.event.WindowEvent evt) {
-                formWindowClosed(evt);
-            }
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
+            }
+            public void windowClosed(java.awt.event.WindowEvent evt) {
+                formWindowClosed(evt);
             }
         });
 
@@ -281,7 +299,7 @@ public class JFrameInsert extends javax.swing.JFrame {
                 .addGap(3, 3, 3)
                 .addComponent(jSpinner2, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -441,6 +459,16 @@ public class JFrameInsert extends javax.swing.JFrame {
         );
 
         jCheckBox1.setText("Yes");
+        jCheckBox1.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                jCheckBox1StateChanged(evt);
+            }
+        });
+        jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox1ActionPerformed(evt);
+            }
+        });
 
         jLabel11.setFont(new java.awt.Font("Ubuntu", 0, 15)); // NOI18N
         jLabel11.setForeground(java.awt.Color.gray);
@@ -496,12 +524,17 @@ public class JFrameInsert extends javax.swing.JFrame {
         // TODO add your handling code here:
         jButton2.setEnabled(true);
         jButton4.setEnabled(true);
+
+        
+       
         addTab(jTabbedPane1,jTextField2.getText());
         
         jTextField4.setEnabled(true);
         jSpinner4.setEnabled(true);
         
         // Update JPanelPhases.PhaseInfo
+
+        
         String Aux = ""+ PhasesCount; 
         List<List<String>> MAPaux =  new ArrayList<List<String>>();
         if(JPanelPhases.PhaseInfo.get(Id_Junction)!= null){
@@ -515,11 +548,13 @@ public class JFrameInsert extends javax.swing.JFrame {
             JPanelPhases.PhaseInfo.put(Id_Junction.toString(),MAPaux);
             //MAPaux.clear();   
         }
+       
+         
         
         jTextField2.setText("");
         jSpinner2.setValue(0);
         phasetime = phasetime + Integer.parseInt(jSpinner2.getValue().toString());
-        //System.out.println("PhaseTime:"+phasetime );
+        //////System.out.println("PhaseTime:"+phasetime );
         setphasetime(Id_Junction);
         jButton5.setEnabled(true);
         //public static Map<String, List<String>> PhaseInfo = new HashMap<String, List<String>>();
@@ -529,17 +564,18 @@ public class JFrameInsert extends javax.swing.JFrame {
     public void setphasetime(String junctionname){
         int phasess = 0;
         //Map<String, List<List<String>>> PhaseInfo = new HashMap<String, List<List<String>>>();
-        ;
+        if(JPanelPhases.PhaseInfo.containsKey(junctionname)){
          List<List<String>> auxList = JPanelPhases.PhaseInfo.get(junctionname);
                for( List<String>  values : auxList ){
-                    //System.out.println("values:"+values);
+                    //////System.out.println("values:"+values);
                     int auxphases = 0;
                     auxphases = Integer.parseInt(values.get(2).toString());
                     phasess= auxphases + phasess ;   
                }
-         
+         }
                jLabel10.setText(""+phasess);
                jLabel10.setVisible(true);
+              
 
         
     }
@@ -548,13 +584,25 @@ public class JFrameInsert extends javax.swing.JFrame {
     // TODO add your handling code here:PhaseTabel
         
     // Save Info 
+    if( jCheckBox1.isSelected()){
+            jSpinner5.setEnabled(true);
+            ControlYellowTime.put(Id_Junction, ""+jSpinner5.getValue());
+        }
+    else{
+            jSpinner5.setEnabled(false);
+            ControlYellowTime.remove(Id_Junction);
+        }
+    
    JPanelPhases.SavedPhaseInfo = JPanelPhases.PhaseInfo;
    JPanelPhases.PhaseInfo = JPanelPhases.SavedPhaseInfo;
+   
+   JPanelPhases.setPhaseTabelModel();
    JPanelPhases.GeneralInfo.put(Id_Junction.toString(),Arrays.asList(jTextField1.getText(),jSpinner3.getValue().toString()));
    StatusWindows = 0;
    dispose();
    JPanelPhases.mapEdgesLanes2.clear();
    
+  
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
@@ -571,7 +619,7 @@ public class JFrameInsert extends javax.swing.JFrame {
         JPanelPhases.SavedPhaseInfo.clear();
         JPanelPhases.PhaseTabel.clear();
         JPanelPhases.GeneralInfo.clear();  
-        JPanelPhases.PhaseInfo.clear();
+        JPanelPhases.Phasedatas.clear();
         StatusWindows = 0;
         dispose();
         JPanelPhases.mapEdgesLanes2.clear();
@@ -580,7 +628,7 @@ public class JFrameInsert extends javax.swing.JFrame {
 
     private void jTabbedPane1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jTabbedPane1StateChanged
         //int indexL = getindextab();
-        //System.out.println("Inice: "+indexL);
+        //////System.out.println("Inice: "+indexL);
         
         
     }//GEN-LAST:event_jTabbedPane1StateChanged
@@ -592,17 +640,17 @@ public class JFrameInsert extends javax.swing.JFrame {
         
         OnTabbedPane = index;
         
-        //System.out.println("Selecionado..."+index);
+        //////System.out.println("Selecionado..."+index);
         
-        //System.out.println("Id:"+index+"\n");        
+        //////System.out.println("Id:"+index+"\n");        
         
 
         
         if(evt.getClickCount() == 1){
         
-        SetPhaseInfo(index);
+        SetPhaseInfo(jTabbedPane1.getSelectedIndex());
         
-            //JTabbednTop = jTabbedPane1.getTabComponentAt(jTabbedPane1.getTabRunCount());
+        //JTabbednTop = jTabbedPane1.getTabComponentAt(jTabbedPane1.getTabRunCount());
         
         }
         
@@ -613,6 +661,8 @@ public class JFrameInsert extends javax.swing.JFrame {
         //RemoveValuesPhaseInfo((jTabbedPane1.getSelectedIndex()-1)); 
         RemoveValuesPhaseInfo(jTabbedPane1.getSelectedIndex());
         //jTabbedPane1.remove(jTabbedPane1.getSelectedIndex());
+        
+        ////System.out.println("jTabbedPane1 tem:"+jTabbedPane1.getTabCount()+"Removendo:"+jTabbedPane1.getSelectedIndex());
         removeTable(jTabbedPane1.getSelectedIndex());
         
         
@@ -643,29 +693,16 @@ public class JFrameInsert extends javax.swing.JFrame {
     }//GEN-LAST:event_jTabbedPane1MouseClicked
 
     public void removeTable(int index){
+        
         List<JTable> newJlist = new ArrayList<JTable>();
         newJlist = JPanelPhases.PhaseTabel.get(Id_Junction);
-        int k =0 ;
-        for( JTable auxtabel : newJlist){
-            for (int count = 0; count < auxtabel.getModel().getRowCount(); count++){
-            }    
-            k++;
-        }
         
         if(JPanelPhases.PhaseTabel.containsKey(Id_Junction)){    
             newJlist.remove(index);
             JPanelPhases.PhaseTabel.put(Id_Junction, newJlist);
+            ////System.out.println("00"+PhaseTabel.get(Id_Junction).size());
         }
         
-        for( JTable auxtabel : newJlist){
-            //System.out.println("K = "+k);
-            for (int count = 0; count < auxtabel.getModel().getRowCount(); count++){
-                //System.out.print(" "+auxtabel.getValueAt(count,0));
-            }
-            //System.out.println(" --------------------");
-            
-            k++;
-        }
         
             repaint();
         
@@ -673,11 +710,10 @@ public class JFrameInsert extends javax.swing.JFrame {
     }
     
     public void SetPhaseInfo(int index){
-        
             if(JPanelPhases.PhaseInfo.containsKey(Id_Junction)){
                  List<List<String>> Mapaux = JPanelPhases.PhaseInfo.get(Id_Junction);
                  if(index > 0){
-                 List<String> aux = Mapaux.get(index-1);
+                 List<String> aux = Mapaux.get(index);
                  jTextField4.setText(aux.get(1).toString());
                  jSpinner4.setValue(Integer.parseInt(aux.get(2).toString())); 
                  }
@@ -692,23 +728,27 @@ public class JFrameInsert extends javax.swing.JFrame {
         
         
         if(JPanelPhases.PhaseInfo.containsKey(Id_Junction)){    
-          List<List<String>> Mapaux = JPanelPhases.PhaseInfo.get(Id_Junction);
-          Mapaux.remove(index);
-          JPanelPhases.PhaseInfo.put(Id_Junction, Mapaux);
+            try {
+            List<List<String>> Mapaux = JPanelPhases.PhaseInfo.get(Id_Junction);
+            Mapaux.remove(index);
+            JPanelPhases.PhaseInfo.put(Id_Junction, Mapaux);
+            } catch (Exception e) {
+            }
+         
         }
         //SetPhaseInfo(jTabbedPane1.getSelectedIndex()+1);
 
     }
     
     private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
+        StatusWindows = 0;
+        dispose();
+        JPanelPhases.mapEdgesLanes2.clear();
         // TODO add your handling code here:
     }//GEN-LAST:event_formWindowClosed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        // TODO add your handling code here:
-        dispose();
-        StatusWindows = 0;
-        JPanelPhases.mapEdgesLanes2.clear();
+
     }//GEN-LAST:event_formWindowClosing
 
     private void jTabbedPane1MouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTabbedPane1MouseDragged
@@ -717,7 +757,7 @@ public class JFrameInsert extends javax.swing.JFrame {
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // TODO add your handling code here:
-        //System.out.println("Salvando ..."+(OnTabbedPane-1)+" :"+ JPanelPhases.PhaseInfo.get(Id_Junction).get(OnTabbedPane-1));
+        //////System.out.println("Salvando ..."+(OnTabbedPane-1)+" :"+ JPanelPhases.PhaseInfo.get(Id_Junction).get(OnTabbedPane-1));
         //List<String> auxlist = Arrays.asList(""+(OnTabbedPane-1),jTextField2.getText(),jSpinner2.getValue().toString());
         //JPanelPhases.PhaseInfo.get(Id_Junction).set(OnTabbedPane-1, auxlist);
   
@@ -727,9 +767,9 @@ public class JFrameInsert extends javax.swing.JFrame {
         
         for( List<String>  values : JPanelPhases.PhaseInfo.get(Id_Junction) ){
             if(i == (OnTabbedPane-1)){
-             //System.out.println("Identificou....");
+             //////System.out.println("Identificou....");
              auxphaseinf2.add(Arrays.asList(""+(OnTabbedPane-1),jTextField4.getText(),jSpinner4.getValue().toString()));
-             //System.out.println("auxphaseinf2"+auxphaseinf2);
+             //////System.out.println("auxphaseinf2"+auxphaseinf2);
             }else{  
               auxphaseinf2.add(values);
             }
@@ -737,9 +777,11 @@ public class JFrameInsert extends javax.swing.JFrame {
          }
 
          JPanelPhases.PhaseInfo.put(Id_Junction, auxphaseinf2);
+         
+         setphasetime(Id_Junction);
         
         
-        //System.out.println("Novo ..."+(OnTabbedPane-1)+" :"+ JPanelPhases.PhaseInfo.get(Id_Junction).get(OnTabbedPane-1));
+        //////System.out.println("Novo ..."+(OnTabbedPane-1)+" :"+ JPanelPhases.PhaseInfo.get(Id_Junction).get(OnTabbedPane-1));
 
         
         
@@ -749,6 +791,26 @@ public class JFrameInsert extends javax.swing.JFrame {
     private void jTextField4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField4ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField4ActionPerformed
+
+    private void jCheckBox1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jCheckBox1StateChanged
+        // TODO add your handling code here:
+        
+       
+        if( jCheckBox1.isSelected()){
+            jSpinner5.setEnabled(true);
+            ControlYellowTime.put(Id_Junction, ""+jSpinner5.getValue());
+            ////System.out.println("ControlYellowTime"+ControlYellowTime);
+        }else{
+            jSpinner5.setEnabled(false);
+            ControlYellowTime.remove(Id_Junction);
+        }
+        
+        
+    }//GEN-LAST:event_jCheckBox1StateChanged
+
+    private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jCheckBox1ActionPerformed
     
     public void uptadetitletab(){
         for(int i = 0; i <  jTabbedPane1.getTabCount(); i++){
@@ -756,69 +818,61 @@ public class JFrameInsert extends javax.swing.JFrame {
         }
     }    
     
-    
-    public void addTab(JTabbedPane tabs, String title, int count) {
+     
+    public void addTab(JTabbedPane tabs, String Junction, int count) {
         
-        JPanelPhases newphase = new JPanelPhases(Id_Junction,count);
+        JPanelPhases newphase = new JPanelPhases(Junction,count);
         
         newphase.setEnabled(true);
         
         String auxtitle = ""+(jTabbedPane1.getTabCount()+1)+"º Phase";
-        jTabbedPane1.addTab(auxtitle,null,newphase,"Click twice to delete this tab.("+title+")");
-        
+        jTabbedPane1.addTab(auxtitle,null,newphase,"Click twice to delete this tab.");
         List<JTable> MapAux = new ArrayList<JTable>();
         
-        
-        if(JPanelPhases.PhaseTabel.get(Id_Junction)!= null){
-            MapAux= JPanelPhases.PhaseTabel.get(Id_Junction);
-            MapAux.add(newphase.getJtabble());
-            JPanelPhases.PhaseTabel.put(Id_Junction.toString(), MapAux);
+ 
+        if(JPanelPhases.PhaseTabel.containsKey(Junction) && JPanelPhases.PhaseTabel.get(Junction)!= null){
+            //MapAux= JPanelPhases.PhaseTabel.get(Junction);
+            //JPanelPhases.PhaseTabel.put(Junction, MapAux);
+            //////System.out.println("Inserindo....Valor Conhecido");
         }else{
             MapAux.add(newphase.getJtabble());
-            JPanelPhases.PhaseTabel.put(Id_Junction.toString(), MapAux); 
+            JPanelPhases.PhaseTabel.put(Junction.toString(), MapAux); 
+            ////System.out.println("Inserindo.... Novo Valor");
         }
         
-        
-        // Salvar
-    
-        if(PhaseTabel.containsKey(Id_Junction)){
-            newphase.setJTable(PhaseTabel.get(Id_Junction).get(count));
-            repaint();
-        }
-       
-        
+        setphasetime(Id_Junction);
+        PhasesCount = PhasesCount+1;
     }
+    
+    
+
     public void addTab(JTabbedPane tabs, String title) {
-        //JPanelOpcoes option = new JPanelOpcoes();
+        
         
         JPanelPhases newphase = new JPanelPhases(Id_Junction,PhasesCount);
-        newphase.setEnabled(true);
-        
-        //Icon icon = new ImageIcon(("resources/icons/delete.png"));
-        //ImageIcon icon = new ImageIcon(getClass().getResource("/resources/icons/close.png"),"Remove");
-        
+        newphase.setEnabled(true);  
         
         String auxtitle = ""+(jTabbedPane1.getTabCount()+1)+"º Phase";
-        jTabbedPane1.addTab(auxtitle,null,newphase,"Click twice to delete this tab.("+title+")");
+        jTabbedPane1.addTab(auxtitle,null,newphase,"Click twice to delete this tab.");
         List<JTable> MapAux = new ArrayList<JTable>();
-        
-        
-        if(JPanelPhases.PhaseTabel.get(Id_Junction)!= null){
 
+        // Insere nova jtabbedPane
+        if(JPanelPhases.PhaseTabel.get(Id_Junction)!= null){
         MapAux= JPanelPhases.PhaseTabel.get(Id_Junction);
-        MapAux.add(newphase.getJtabble());
+        MapAux.add(newphase.getJtabble());    
         JPanelPhases.PhaseTabel.put(Id_Junction.toString(), MapAux);
-            //MAPaux.clear();
+        
         }else{
-            
         MapAux.add(newphase.getJtabble());
         JPanelPhases.PhaseTabel.put(Id_Junction.toString(), MapAux);
-            //MAPaux.clear();   
+        ////System.out.println("04:"+PhaseTabel.get(Id_Junction).size());
         }
         
+        
+
         // Salvar
-    
-        PhasesCount ++;
+        setphasetime(Id_Junction);
+        PhasesCount = PhasesCount+1;
         
         
         /*
@@ -885,7 +939,7 @@ public class JFrameInsert extends javax.swing.JFrame {
             //String tab = "";
         
             //tab = (jTabbedPane1.getTabRunCount()) +"º Phase";
-            //System.out.println("Aba: "+tab+  "  total:"+ jTabbedPane1.getTabCount()+" Estou:"+jTabbedPane1.getTabRunCount()+" ou "+currentIndex);
+            //////System.out.println("Aba: "+tab+  "  total:"+ jTabbedPane1.getTabCount()+" Estou:"+jTabbedPane1.getTabRunCount()+" ou "+currentIndex);
             return currentIndex;
           }
         }

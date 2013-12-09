@@ -37,14 +37,34 @@ public class JPanelPhases extends javax.swing.JPanel {
     public static Map<String, List<List<String>>> PhaseInfo = new HashMap<String, List<List<String>>>();
     public static Map<String, List<List<String>>> SavedPhaseInfo = new HashMap<String, List<List<String>>>();
     public static Map<String, List<JTable>> PhaseTabel = new HashMap<String, List<JTable>>();
+    
+    public static Map<String, List<List<String>>> Phasedatas = new HashMap<String, List<List<String>>>();
 
        
      //public Map<String, Map <String>> Phasesinf = new HashMap<String, Map <String>>;
+       
     
     
+    public static void setPhaseTabelModel(){  
+        
+        for(String Id_Junction : PhaseTabel.keySet()){  
+          List<List<String>> DataJunction = new ArrayList<List<String>>();
+          int index = PhaseTabel.get(Id_Junction).size();
+          for (int j =0 ; j< index; j++){
+            List<String> datas = new ArrayList<String>();
+            for( int i =0;i< PhaseTabel.get(Id_Junction).get(j).getRowCount();i++){
+             datas.add(""+PhaseTabel.get(Id_Junction).get(j).getValueAt(i, 0));
+            }
+            DataJunction.add(datas);
+          }
+          Phasedatas.remove(Id_Junction);
+          Phasedatas.put(Id_Junction, DataJunction);
+        }
+        
+    }
     
     public void setlen(String Conectionname){
-        Map<String, List<List<String>>> InformationsNET  = InformationsNET = Project.getCurrentlyLoadedProject().getFromTo();
+        Map<String, List<List<String>>> InformationsNET  = Project.getCurrentlyLoadedProject().getFromTo();
         for( String keys : InformationsNET.keySet() ){
             if(keys.equals(Conectionname)){
              this.len = InformationsNET.get(keys).size();
@@ -124,6 +144,7 @@ public class JPanelPhases extends javax.swing.JPanel {
          jTable1.setVisible(true);
 
         //jTable1.sorterChanged(null);
+         //setPhaseTabelModel();
         
     }
     
@@ -132,20 +153,26 @@ public class JPanelPhases extends javax.swing.JPanel {
         if(PhaseTabel.containsKey(Id_Junction)){
                        if(PhaseTabel.get(Id_Junction).get(index)!=null){
                        for( int i =0;i< PhaseTabel.get(Id_Junction).get(index).getRowCount();i++){
-                           //System.out.print(" "+PhaseTabel.get(Id_Junction).get(index).getValueAt(i, 0));
+                           ////System.out.print(" "+PhaseTabel.get(Id_Junction).get(index).getValueAt(i, 0));
                            jTable1.setValueAt(PhaseTabel.get(Id_Junction).get(index).getValueAt(i, 0), i, 0);
                        }
             }
         
         }
+         
+        //setPhaseTabelModel();
         
     }
+    
+
+    
     
      public JPanelPhases(String Conectionname, int phasesnumber) {
         setlen(Conectionname);
         initComponents();
+        
         data = InsertValues(Conectionname,phasesnumber);
-
+        //JFrameInsert.PhasesCount ++;
         updateTable(data);
 
     }
@@ -173,7 +200,7 @@ public class JPanelPhases extends javax.swing.JPanel {
          //updateTable(data);
          jTable1.repaint();
          repaint();
-         
+         //setPhaseTabelModel();
      }
      
      
@@ -182,7 +209,7 @@ public class JPanelPhases extends javax.swing.JPanel {
      }
     
      public List<List<String>> OrdenarList (List<List<String>> inList){
-         //System.out.println("inList: "+inList);
+         ////System.out.println("inList: "+inList);
          List<List<String>> NewauxList = new ArrayList<List<String>>();
          
          for( List<String>  outvalues : inList ){
@@ -234,21 +261,44 @@ public class JPanelPhases extends javax.swing.JPanel {
         
          Map<String, List<List<String>>> InformationsNET  = Project.getCurrentlyLoadedProject().getFromTo();
         // Map<String, List<JTable>> PhaseTabel
-        //System.out.println(Conectionname+ "----"+InformationsNET);
+        //System.out.println(Conectionname+ "----\n" +InformationsNET);
+         
+         
         for( String keys : InformationsNET.keySet() ){
             
             if(keys.equals(Conectionname)){
-               //System.out.println("----"+InformationsNET.get(keys));
+               ////System.out.println("----"+Conectionname);
                List<List<String>> auxList = InformationsNET.get(keys);      
                int i = 0;       
-               //System.out.println("auxList"+auxList);
+               ////System.out.println("auxList"+auxList);
                for( List<String>  values : OrdenarList(InformationsNET.get(keys)) ){
+                   if(Phasedatas.containsKey(Conectionname)){
+                   ////System.out.println("Phases:"+Phasedatas.get(Conectionname).size()+" and "+PhasesCount);
+                       
+                   if(Phasedatas.containsKey(Conectionname) &&  PhasesCount < Phasedatas.get(Conectionname).size()){
+                   data[i][0] = Boolean.parseBoolean(Phasedatas.get(Conectionname).get(PhasesCount).get(i)); // Visible
+                   data[i][1] = values.get(0); // From Edge
+                   data[i][2] = values.get(1); // To Edge
+                   data[i][3] = values.get(2); // From Lane
+                   data[i][4] = values.get(3); // To Lane
+                   data[i][5] = "     ";    
+                   }else{
+                   data[i][0] = false; // Visible
+                   data[i][1] = values.get(0); // From Edge
+                   data[i][2] = values.get(1); // To Edge
+                   data[i][3] = values.get(2); // From Lane
+                   data[i][4] = values.get(3); // To Lane
+                   data[i][5] = "     "; 
+                   }
+                   }
+                   else{
                    data[i][0] = false; // Visible
                    data[i][1] = values.get(0); // From Edge
                    data[i][2] = values.get(1); // To Edge
                    data[i][3] = values.get(2); // From Lane
                    data[i][4] = values.get(3); // To Lane
                    data[i][5] = "     ";
+                   }
                    // 4 - reference
                    i++;
                }
@@ -376,7 +426,7 @@ public class JPanelPhases extends javax.swing.JPanel {
             }
         } 
         
-     
+        
 
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton1ActionPerformed

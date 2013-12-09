@@ -4,6 +4,7 @@
  */
 package TrafficLight;
 
+import static TrafficLight.ImportXMLTrafficLight.ConvertConnection;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -15,11 +16,12 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
-
 /**
  *
  * @author luiz
@@ -29,10 +31,52 @@ public class ExportXmlTrafficLight {
     public String junctionname = "";
     public Map<String, String> ConnectionsValues = new HashMap<String, String>();
     public Map<String, Integer> ContConnection = new HashMap<String, Integer>();
+    
+    
+    public String getindex(String from , String to, String fromLane, String toLane, int key){
+        String Posicao="";
+        
+        ////System.out.println("FROM:"+from+" TO:"+to+" FromLane"+fromLane+" ToLane:"+toLane);
+        int breek = 0;
+        for(String connections : JPanelPhases.PhaseTabel.keySet()){
+            List<JTable> tabels  = JPanelPhases.PhaseTabel.get(connections);
+            JTable tabel = tabels.get(0);
+            for (int count = 0; count < tabel.getModel().getRowCount(); count++){
+                   String Tfrom =  ""+tabel.getValueAt(count, 1);
+                   String Tto = ""+tabel.getValueAt(count, 2);
+                   String TfromLane= ""+tabel.getValueAt(count, 3);
+                   String TtoLane= ""+tabel.getValueAt(count, 4);
+                   
+                   //System.out.print(" Tfrom:"+Tfrom +" == "+from+" :"+Tfrom.equals(from));
+                   //System.out.print(" Tto:"+Tto +" == "+to+" :"+Tto.equals(to));
+                   //System.out.print(" TfromLane:"+TfromLane +" == "+fromLane+" :"+TfromLane.equals(fromLane));
+                   //System.out.print(" TtoLane:"+TtoLane +" == "+toLane);
+                   //System.out.println("");
+                   
+                    if( (Tfrom.equals(from))  && (Tto.equals(to)) && (TfromLane.equals(fromLane)) && (TtoLane.equals(toLane))){
+                        Posicao = ""+count;
+                        breek = 1;
+                        break;
+                    }     
+                    
+             }
+             if(breek == 1){
+                 break;
+             }
+        }
+        
+       //if(Posicao.equals("")){
+       //    Posicao = ""+key;
+       //}
+        
+       //System.out.println("Retornou:"+Posicao);
+       return Posicao;
+        
+    }
 
     public String ReadFile(String path) throws IOException {
-
-        System.out.println("path:" + path);
+        //System.out.println("-----------------------------Exportando-------------------------");
+        //System.out.println("path:"+path);        
         SAXBuilder builder = new SAXBuilder();
         // File xmlFile = new File("Output/teste.xml");
         File xmlFile = new File(path);
@@ -61,6 +105,7 @@ public class ExportXmlTrafficLight {
 
             for (int i = 0; i < Elements.size(); i++) {
                 flag = 0;
+                
                 Element node = (Element) Elements.get(i);
 
                 if (node.getName().equals("junction")) {
@@ -68,64 +113,94 @@ public class ExportXmlTrafficLight {
                     junctionname = node.getAttribute("id").getValue();
 
                     ConnectionsValues.put(junctionname, node.getAttribute("intLanes").getValue().toString());
+                    //ConnectionsValues.put(junctionname,node.getAttributeValue("intLanes").split(" "));
                     ContConnection.put(junctionname, 0);
 
                     if (!JPanelPhases.GeneralInfo.containsKey(junctionname)) {
                         ContConnection.remove(junctionname);
                         ConnectionsValues.remove(junctionname);
-
                     }
-
+                    
                     ExportNetFile aux = new ExportNetFile();
                     Xml += "\n" + aux.GenerateTlsXmlFile(node.getAttribute("id").getValue()) + "\n";
-
-                    //System.out.println("  "+ node.getAttribute("id").getValue());
                 }
-
+                
+                
+               //System.out.println("1- ContConnections:"+ContConnection+" ConnectionsValues"+ConnectionsValues);
+                //ConvertConnection
+                for(String sd :ConvertConnection.keySet()){
+                                    //System.out.println("Checando:"+sd);
+                                    for(String cn : ConnectionsValues.keySet()){
+                                    if(ConnectionsValues.get(cn).contains(sd)){
+                                        //System.out.println("Contem:"+sd);
+                                        ConnectionsValues.put(cn, ConnectionsValues.get(cn).replaceAll(sd, ""+ConvertConnection.get(sd)));
+                                    }
+                                    }
+                                }
+                 //System.out.println(" 2- ContConnections:"+ContConnection+" ConnectionsValues"+ConnectionsValues);
+                
                 // Get Elements
                 Xml += "<" + node.getName();
-
+                
                 int auxloc = 0;
+                String from ="";
+                String to="";
+                String fromLane ="";
+                String toLane="";
+                
                 for (int j = 0; j < node.getAttributes().size(); j++) {
 
                     if (node.getName().equals("connection")) {
 
+                        if (node.getAttributes().get(j).getName().equals("from")) {
+                            from = ""+node.getAttributes().get(j).getValue();   
+                        }
+                        if (node.getAttributes().get(j).getName().equals("to")) {
+                            to = ""+node.getAttributes().get(j).getValue().toString();
+                        }
+                        if (node.getAttributes().get(j).getName().equals("fromLane")) {
+                            fromLane = ""+node.getAttributes().get(j).getValue().toString();
+                        }
+                        if (node.getAttributes().get(j).getName().equals("toLane")) {
+                            toLane = ""+ node.getAttributes().get(j).getValue().toString();
+                        }
+                        
+                        
                         if (node.getAttributes().get(j).getName().equals("via")) {
-                            //System.out.println("ConnectionsValues:"+ConnectionsValues);
-                            //System.out.println("Other:"+node.getAttributes().get(j).getValue().toString());
-
-                            String aux = node.getAttributes().get(j).getValue();
 
                             for (String key : ConnectionsValues.keySet()) {
-
-                                if (ConnectionsValues.get(key).contains(node.getAttributes().get(j).getValue())) {
-                                    //System.out.println("Temmmm");
-
-                                    Xml += " tl=\"" + key + "\" linkIndex=\"" + ContConnection.get(key) + "\"";
-                                    ContConnection.put(key, (ContConnection.get(key) + 1));
-                                    auxloc = 1;
-                                    break;
+                                String aux = node.getAttributes().get(j).getValue();
+                                
+                                
+                                
+                                if (ConnectionsValues.get(key).contains(aux)) {
+                                        Xml += " tl=\"" + key + "\" linkIndex=\"" + getindex(from , to, fromLane, toLane, ContConnection.get(key)) + "\"";
+                                        from ="";to="";fromLane ="";toLane="";
+                                        ContConnection.put(key, (ContConnection.get(key) + 1));
+                                        auxloc = 1;
+                                        break;
+                                    
                                 }
                             }
-
                         }
+                        
                         if (node.getAttributes().get(j).getName().equals("state")) {
 
                             /*
-                             for (String key : ConnectionsValues.keySet()) {
-                             System.out.println("ConnectionsValues.get(key):"+ConnectionsValues.get(key)+" node:"+node.getAttributes().get(j).getValue());
-                             if (ConnectionsValues.get(key).contains(node.getAttributes().get(j).getValue())) {
-                             Xml += " state=\"o\"";  
-                             auxloc = 1;
-                             }
-                             }
-                             **/
-                            System.out.println("auxloc:" + auxloc);
-                            if (auxloc == 0) {
-                                Xml += " " + node.getAttributes().get(j).getName() + "=\"" + node.getAttributes().get(j).getValue() + "\"";
-                            } else {
-                                Xml += " state=\"o\"";
-                                //auxloc = 0;
+                            for (String key : ConnectionsValues.keySet()) {
+                                //System.out.println("ConnectionsValues.get(key):"+ConnectionsValues.get(key)+" node:"+node.getAttributes().get(j).getValue());
+                                if (ConnectionsValues.get(key).contains(node.getAttributes().get(j).getValue())) {
+                                Xml += " state=\"o\"";  
+                                auxloc = 1;
+                                }
+                            }
+                            **/
+                            
+                            if(auxloc == 0){
+                              Xml += " " + node.getAttributes().get(j).getName() + "=\"" + node.getAttributes().get(j).getValue() + "\"";  
+                            }else{
+                                 Xml += " state=\"o\""; 
+                                 //auxloc = 0;
                             }
 
                         } else {
@@ -170,7 +245,7 @@ public class ExportXmlTrafficLight {
             }
             Xml += "</" + rootNode.getName() + "> \n";
 
-            //System.out.println(Xml);
+           ////System.out.println(Xml);
             return Xml;
             //FileWriter fw = new FileWriter(nfile);
             //PrintWriter pw = new PrintWriter(fw);
@@ -211,15 +286,13 @@ public class ExportXmlTrafficLight {
         return null;
 
     }
-
-    public void Write(String path, String Xml) throws IOException {
-
-        FileWriter fw = new FileWriter(path);
-        PrintWriter pw = new PrintWriter(fw);
-        pw.print(Xml);
-        pw.close();
-        fw.close();
-
+    
+    public void Write(String path, String Xml) throws IOException{
+                FileWriter fw = new FileWriter(path);
+		PrintWriter pw = new PrintWriter(fw);
+                pw.print(Xml);
+		pw.close();
+		fw.close();
     }
 
     public void ReadFilse(String arquivo) {
